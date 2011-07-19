@@ -33,6 +33,7 @@
 
     <modules>
         <module>infinispan-container-managed</module>
+        <module>infinispan-impl</module>
     </modules>
 
     <build>
