@@ -22,7 +22,7 @@
 package org.jboss.infinispan.arquillian.model;
 
 import java.net.InetAddress;
-import org.jboss.infinispan.arquillian.utils.MBeanObjects;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanUtils;
 
@@ -37,9 +37,9 @@ public class HotRodEndpoint
 {
    private MBeanServerConnectionProvider provider;
    
-   private MBeanObjects mBeans;
+   private MBeanObjectsProvider mBeans;
 
-   public HotRodEndpoint(MBeanServerConnectionProvider provider, MBeanObjects mBeans)
+   public HotRodEndpoint(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
    {
       this.provider = provider;
       this.mBeans = mBeans;

@@ -21,7 +21,7 @@
  */
 package org.jboss.infinispan.arquillian.model;
 
-import org.jboss.infinispan.arquillian.utils.MBeanObjects;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanUtils;
 
@@ -36,13 +36,13 @@ public class CacheInfo
 {
    private MBeanServerConnectionProvider provider;
    
-   private MBeanObjects mBeans;
+   private MBeanObjectsProvider mBeans;
 
    private String cacheManagerName;
 
    private String cacheName;
 
-   public CacheInfo(String cacheName, String cacheManagerName, MBeanServerConnectionProvider provider, MBeanObjects mBeans)
+   public CacheInfo(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans, String cacheName, String cacheManagerName)
    {
       this.cacheName = cacheName;
       this.cacheManagerName = cacheManagerName;
@@ -54,7 +54,7 @@ public class CacheInfo
    {
       try
       {
-         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheMBean(cacheName, cacheManagerName), CacheAttributes.CACHE_NAME);
+         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheMBean(provider, cacheName, cacheManagerName), CacheAttributes.CACHE_NAME);
       }
       catch (Exception e)
       {
@@ -66,7 +66,7 @@ public class CacheInfo
    {
       try
       {
-         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheMBean(cacheName, cacheManagerName), CacheAttributes.CACHE_STATUS);
+         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheMBean(provider, cacheName, cacheManagerName), CacheAttributes.CACHE_STATUS);
       }
       catch (Exception e)
       {
@@ -78,7 +78,7 @@ public class CacheInfo
    {
       try
       {
-         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheStatisticsMBean(cacheName, cacheManagerName), stats.toString());
+         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheStatisticsMBean(provider, cacheName, cacheManagerName), stats.toString());
       }
       catch (Exception e)
       {

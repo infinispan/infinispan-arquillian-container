@@ -23,7 +23,7 @@ package org.jboss.infinispan.arquillian.model;
 
 import java.net.InetAddress;
 
-import org.jboss.infinispan.arquillian.utils.MBeanObjects;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanUtils;
 
@@ -37,13 +37,13 @@ import org.jboss.infinispan.arquillian.utils.MBeanUtils;
  */
 public class RESTEndpoint
 {
-   private String contextPath = "datagrid/rest";
+   private final String contextPath = "/datagrid";
 
    private MBeanServerConnectionProvider provider;
    
-   private MBeanObjects mBeans;
+   private MBeanObjectsProvider mBeans;
 
-   public RESTEndpoint(MBeanServerConnectionProvider provider, MBeanObjects mBeans)
+   public RESTEndpoint(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
    {
       this.provider = provider;
       this.mBeans = mBeans;
@@ -54,7 +54,7 @@ public class RESTEndpoint
       String hostname;
       try
       {
-         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getMemCachedServerMBean(), ServerModuleAttributes.HOST_NAME);
+         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.HOST_NAME);
          return InetAddress.getByName(hostname);
       }
       catch (Exception e)

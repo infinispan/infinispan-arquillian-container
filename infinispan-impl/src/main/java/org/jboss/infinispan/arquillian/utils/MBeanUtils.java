@@ -21,6 +21,11 @@
  */
 package org.jboss.infinispan.arquillian.utils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 /**
@@ -39,7 +44,26 @@ public class MBeanUtils
       }
       catch (Exception e)
       {
-         throw new IllegalArgumentException("Could not retrieve attribute " + attr + " on MBean " + mbean);
+         throw new IllegalArgumentException("Could not retrieve attribute " + attr + " on MBean " + mbean, e);
+      }
+   }
+
+   public static List<String> getMBeanNamesByPattern(MBeanServerConnectionProvider provider, String pattern)
+   {
+      try
+      {
+         Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(pattern), null);
+         List<String> mBeanNames = new ArrayList<String>();
+         Iterator<ObjectInstance> iter = mBeans.iterator();
+         while (iter.hasNext())
+         {
+            mBeanNames.add(iter.next().getObjectName().toString());
+         }
+         return mBeanNames;
+      }
+      catch (Exception e)
+      {
+         throw new IllegalArgumentException("Could not retrieve MBean objects based on domain name", e);
       }
    }
 }

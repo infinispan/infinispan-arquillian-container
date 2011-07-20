@@ -28,10 +28,9 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.as.arquillian.container.CommonContainerConfiguration;
-
 import org.jboss.infinispan.arquillian.container.managed.InfinispanConfiguration;
-import org.jboss.infinispan.arquillian.utils.MBeanObjectsEDG;
-import org.jboss.infinispan.arquillian.utils.MBeanObjectsStandalone;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 
 /**
  * Creates {@link InfinispanContext} and stores {@link InfinispanInfo} object
@@ -42,7 +41,7 @@ import org.jboss.infinispan.arquillian.utils.MBeanObjectsStandalone;
  */
 public class InfinispanConfigurator
 {
-   private static final String STANDALONE_FLAG = "ispnHome";
+   private final String STANDALONE_FLAG = "ispnHome";
 
    @Inject
    @SuiteScoped
@@ -65,28 +64,27 @@ public class InfinispanConfigurator
          try
          {
             conf = (InfinispanConfiguration) event.getContainer().createDeployableConfiguration();
-            info = new InfinispanInfoImpl(conf.getHost(), conf.getJmxPort(), new MBeanObjectsStandalone());
+            info = new InfinispanInfoImpl(conf.getHost(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.STANDALONE));
          }
          catch (Exception e)
          {
-            throw new RuntimeException("Could not create deployable configuration");
+            throw new RuntimeException("Could not create deployable configuration", e);
          }
       }
       else
       {
-         //throw new RuntimeException("Retrieving stastistics from a non-community Infinispan is not allowed yet");
          CommonContainerConfiguration conf;
          try
          {
             conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
-            info = new InfinispanInfoImpl(conf.getBindAddress().getHostName(), conf.getJmxPort(), new MBeanObjectsEDG());
+            info = new InfinispanInfoImpl(conf.getBindAddress().getHostName(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.EDG));
          }
          catch (Exception e)
          {
-            throw new RuntimeException("Could not create deployable configuration");
+            throw new RuntimeException("Could not create deployable configuration", e);
          }
       }
-
+      
       infinispanContext.get().add(event.getContainer().getContainerConfiguration().getContainerName(), info);
    }
 }

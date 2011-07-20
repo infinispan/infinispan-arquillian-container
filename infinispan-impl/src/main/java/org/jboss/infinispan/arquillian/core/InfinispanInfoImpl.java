@@ -27,11 +27,14 @@ import org.jboss.infinispan.arquillian.model.CacheManagerInfo;
 import org.jboss.infinispan.arquillian.model.HotRodEndpoint;
 import org.jboss.infinispan.arquillian.model.MemCachedEndpoint;
 import org.jboss.infinispan.arquillian.model.RESTEndpoint;
-import org.jboss.infinispan.arquillian.utils.MBeanObjects;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
+import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 
 /**
- * Implementation of {@link InfinispanInfo} for Community Infinispan Server
+ * Implementation of {@link InfinispanInfo}. This class is injected into a
+ * testcase and provides information about caches, cache managers and server
+ * module endpoints (hotrod, memcached, REST).
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -39,10 +42,10 @@ import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 public class InfinispanInfoImpl implements InfinispanInfo
 {
    private MBeanServerConnectionProvider provider;
-   
-   private MBeanObjects mBeans;
 
-   public InfinispanInfoImpl(String host, int jmxPort, MBeanObjects mBeans)
+   private MBeanObjectsProvider mBeans;
+
+   public InfinispanInfoImpl(String host, int jmxPort, MBeanObjectsProvider mBeans)
    {
       this.provider = new MBeanServerConnectionProvider(getInetAddress(host), jmxPort);
       this.mBeans = mBeans;
@@ -51,13 +54,20 @@ public class InfinispanInfoImpl implements InfinispanInfo
    @Override
    public CacheManagerInfo getDefaultCacheManager()
    {
-      return new CacheManagerInfo("DefaultCacheManager", provider, mBeans);
+      if (mBeans.getDomain().equals(Domain.EDG))
+      {
+         return new CacheManagerInfo(provider, mBeans, "default");
+      }
+      else
+      {
+         return new CacheManagerInfo(provider, mBeans, "DefaultCacheManager");
+      }     
    }
 
    @Override
    public CacheManagerInfo getCacheManager(String cacheManagerName)
    {
-      return new CacheManagerInfo(cacheManagerName, provider, mBeans);
+      return new CacheManagerInfo(provider, mBeans, cacheManagerName);
    }
 
    @Override
@@ -75,8 +85,14 @@ public class InfinispanInfoImpl implements InfinispanInfo
    @Override
    public RESTEndpoint getRESTEndpoint()
    {
-      // a real value will be returned only for EDG (infinispan in JBossAS 7+)
-      throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for Community Infinispan Server");
+      if (mBeans.getDomain().equals(Domain.EDG))
+      {
+         return new RESTEndpoint(provider, mBeans);
+      }
+      else
+      {
+         throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server");
+      }
    }
 
    protected static InetAddress getInetAddress(String name)
