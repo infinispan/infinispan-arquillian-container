@@ -23,6 +23,7 @@ package org.jboss.infinispan.arquillian.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * MBean objects for accessing cache,cache manager, cache statistics mbeans and
@@ -120,13 +121,11 @@ public class MBeanObjectsProvider
    private String extractNameProperty(String from)
    {
       /*
-       * e.g when I pass "jboss.infinispan:type=Cache,name="default(dist_sync)",
-       * manager="default", the result will be "default(dist_sync)"
+       * e.g when I pass: "jboss.infinispan:type=Cache,name="default(dist_sync)",
+       * manager="default", the result will be default(dist_sync)
        */
-      String delimiter = "name=\"";
-      int start = from.indexOf(delimiter) + delimiter.length();
-      String rest = from.substring(start);
-      return rest.substring(0, rest.indexOf("\""));
+      Pattern namePattern = Pattern.compile(".*name=\"(.*?)\".*", Pattern.DOTALL);
+      return namePattern.matcher(from).replaceFirst("$1");
    }
 
    public String getDomain()
