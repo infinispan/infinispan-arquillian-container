@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns="http://www.jboss.org/arquillian-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.jboss.org/arquillian-1.0 http://jboss.org/schema/arquillian/arquillian-1.0.xsd">
+
+    <group qualifier="Grid">
+        <container qualifier="container1">
+            <configuration>
+                <property name="ispnHome">/path/to/infinispan/dir</property>
+                <property name="cacheConfig">/path/to/xml/cache/config/file/</property>            
+                <property name="protocol">hotrod</property>
+                <property name="host">test1</property>                                         
+            </configuration>
+        </container>
+        <container qualifier="container2">
+            <configuration>
+                <property name="ispnHome">/path/to/infinispan/dir</property>
+                <property name="cacheConfig">/path/to/xml/cache/config/file/</property>            
+                <property name="protocol">hotrod</property>
+                <property name="host">test2</property>                                                        
+            </configuration>
+        </container>
+    </group>
+    
+<!--
+    Other container properties: 
+    port, masterThreads, idleTimeout, tcpNoDelay, sendBufSize, recvBufSize, proxyHost, proxyPort, 
+    topoLockTimeout, topoReplTimeout, topoStateTransfer, cacheManagerClass, javaVmArguments, 
+    startupTimeoutInSeconds, shutdownTimeoutInSeconds, jmxPort 
+-->
+    
+</arquillian>
