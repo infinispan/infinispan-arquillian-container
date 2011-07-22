@@ -19,7 +19,7 @@
         <version.junit>4.8.1</version.junit>
         <version.mockito>1.8.3</version.mockito>
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
-        <version.maven.surefire.plugin>2.8.1</version.maven.surefire.plugin>
+        <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
     </properties>
 
     <dependencyManagement>

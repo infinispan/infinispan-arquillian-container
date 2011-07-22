@@ -23,15 +23,19 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
@@ -52,9 +56,13 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
 {
    private static Logger log = Logger.getLogger(InfinispanContainer.class.getName());
 
+   private static final long WAIT_INTERVAL = 200;
+
    private Process process;
 
    private InfinispanConfiguration configuration;
+
+   private MBeanServerConnectionProvider provider;
 
    @Override
    public ProtocolDescription getDefaultProtocol()
@@ -82,10 +90,7 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
       final String mainClassName = "org.infinispan.server.core.Main";
       final String preferIPv4 = "-Djava.net.preferIPv4Stack=true";
       final String log4jConfig = "-Dlog4j.configuration=file://" + ispnHome + File.separator + "etc" + File.separator + "log4j.xml";
-      final String jvmJmxSettings = "-Dcom.sun.management.jmxremote.port=" + jmxPort + 
-                                    " -Dcom.sun.management.jmxremote.authenticate=false" +
-                                    " -Dcom.sun.management.jmxremote.ssl=false";
-
+      final String jvmJmxSettings = "-Dcom.sun.management.jmxremote.port=" + jmxPort + " -Dcom.sun.management.jmxremote.authenticate=false" + " -Dcom.sun.management.jmxremote.ssl=false";
       try
       {
          List<String> cmd = new ArrayList<String>();
@@ -113,7 +118,7 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
          cmd.add(constructClassPath(allLibs));
 
          splitAndAdd(cmd, configuration.getJavaVmArguments());
-         
+
          cmd.add(preferIPv4);
          cmd.add(log4jConfig);
 
@@ -131,6 +136,10 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
          processBuilder.redirectErrorStream(true);
          process = processBuilder.start();
          new Thread(new ConsoleConsumer()).start();
+
+         provider = new MBeanServerConnectionProvider(InetAddress.getByName(configuration.getHost()), configuration.getJmxPort());
+         
+         log.info("Waiting for server to start...");
          waitForServerToStart(configuration.getStartupTimeoutInSeconds());
       }
       catch (Exception e)
@@ -139,24 +148,55 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
       }
    }
 
+   private void waitForServerToStart(int startupTimeout) throws Exception
+   {
+      long timeout = startupTimeout * 1000;
+      boolean serverAvailable = false;
+      while (timeout > 0 && serverAvailable == false)
+      {
+         serverAvailable = isServerStarted();
+         if (!serverAvailable)
+         {
+            Thread.sleep(WAIT_INTERVAL);
+            timeout -= WAIT_INTERVAL;
+         }
+      }
+      if (!serverAvailable)
+      {
+         destroyProcess();
+         throw new TimeoutException(String.format("Managed server was not started within [%d] ms", configuration.getStartupTimeoutInSeconds()));
+      }
+   }
+
+   private boolean isServerStarted()
+   {
+      String pattern = "org.infinispan:*";
+      try
+      {
+         Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(pattern), null);
+         // wait for all mbeans for default cache and cache manager's mbean
+         if (mBeans.size() < 6)
+         {
+            return false;
+         }
+         else
+         {
+            // potentially, there can be more than 6 mbeans for Infinispan -> give them time to start
+            Thread.sleep(WAIT_INTERVAL);
+            return true;
+         }
+      }
+      catch (Exception e)
+      {
+         return false;
+      }
+   }
+
    private void splitAndAdd(List<String> cmd, String arg)
    {
       for (String param : arg.split("\\s+"))
       {
          cmd.add(param);
-      }
-   }
-
-   private void waitForServerToStart(int timeoutInSeconds)
-   {
-      try
-      {
-         log.info("Waiting for server to start...");
-         Thread.sleep(timeoutInSeconds * 1000);
-      }
-      catch (InterruptedException e)
-      {
-         log.warning("Interrupted while waiting for the server to start");
       }
    }
 
@@ -360,6 +400,23 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
          catch (IOException e)
          {
          }
+      }
+   }
+
+   private int destroyProcess()
+   {
+      if (process == null)
+      {
+         return 0;
+      }
+      process.destroy();
+      try
+      {
+         return process.waitFor();
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
       }
    }
 }
