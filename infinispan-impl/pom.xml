@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- Parent -->
-	<parent>
-		<groupId>org.infinispan.arquillian.container</groupId>
-		<artifactId>infinispan-parent-arquillian</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.infinispan.arquillian.container</groupId>
+        <artifactId>infinispan-parent-arquillian</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<!-- Model Version -->
-	<modelVersion>4.0.0</modelVersion>
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
 
-	<!-- Artifact Configuration -->
-	<artifactId>infinispan-arquillian-impl</artifactId>
-	<name>Infinispan Arquillian Implementation</name>
-	<description>Infinispan integration for the Arquillian project</description>
+    <!-- Artifact Configuration -->
+    <artifactId>infinispan-arquillian-impl</artifactId>
+    <name>Infinispan Arquillian Implementation</name>
+    <description>Infinispan integration for the Arquillian project</description>
 
-	<!-- Properties -->
-	<properties>
-	</properties>
+    <!-- Properties -->
+    <properties>
+    </properties>
 
-	<!-- Dependencies -->
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.arquillian.core</groupId>
-			<artifactId>arquillian-core-impl-base</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.core</groupId>
-			<artifactId>arquillian-core-impl-base</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-			<version>${version.arquillian_core}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.test</groupId>
-			<artifactId>arquillian-test-impl-base</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.test</groupId>
-			<artifactId>arquillian-test-impl-base</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-			<version>${version.arquillian_core}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.config</groupId>
-			<artifactId>arquillian-config-impl-base</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${version.junit}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- compile time dependencies -->
-		<dependency>
-			<groupId>org.jboss.infinispan.arquillian.container</groupId>
-			<artifactId>infinispan-arquillian-container-managed</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.as</groupId>
-			<artifactId>jboss-as-arquillian-common</artifactId>
-			<version>7.0.0.Final</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+    <!-- Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-impl-base</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+            <version>${version.arquillian_core}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.test</groupId>
+            <artifactId>arquillian-test-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.test</groupId>
+            <artifactId>arquillian-test-impl-base</artifactId>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+            <version>${version.arquillian_core}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.config</groupId>
+            <artifactId>arquillian-config-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- compile time dependencies -->
+        <dependency>
+            <groupId>org.jboss.infinispan.arquillian.container</groupId>
+            <artifactId>infinispan-arquillian-container-managed</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-common</artifactId>
+            <version>7.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${version.maven.surefire.plugin}</version>
-				<configuration>
-					<forkMode>once</forkMode>
-					<skipTests>false</skipTests>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven.surefire.plugin}</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 
