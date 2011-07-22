@@ -6,21 +6,22 @@
         <container qualifier="container1">
             <configuration>
                 <property name="ispnHome">/path/to/infinispan/dir</property>
-                <property name="cacheConfig">/path/to/xml/cache/config/file/</property>            
+<!--            <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
                 <property name="protocol">hotrod</property>
-                <property name="host">test1</property>                                         
+                <property name="host">test1</property>
             </configuration>
         </container>
         <container qualifier="container2">
             <configuration>
                 <property name="ispnHome">/path/to/infinispan/dir</property>
-                <property name="cacheConfig">/path/to/xml/cache/config/file/</property>            
+<!--            <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
                 <property name="protocol">hotrod</property>
-                <property name="host">test2</property>                                                        
+                <property name="host">test2</property>
+                <property name="jmxPort">1091</property>
             </configuration>
         </container>
     </group>
-    
+
 <!--
     Other container properties: 
     port, masterThreads, idleTimeout, tcpNoDelay, sendBufSize, recvBufSize, proxyHost, proxyPort, 

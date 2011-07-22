@@ -71,16 +71,15 @@ public class InfinispanConfiguration implements ContainerConfiguration
 
    private String javaVmArguments = "-Xmx512m -XX:MaxPermSize=128m";
 
-   private int startupTimeoutInSeconds = 5;
+   private int startupTimeoutInSeconds = 30;
 
-   private int shutdownTimeoutInSeconds = 3;
+   private int shutdownTimeoutInSeconds = 20;
    
    private int jmxPort = 1090;
 
    public void validate() throws ConfigurationException
    {
       Validate.configurationDirectoryExists(ispnHome, "Either ISPN_HOME environment variable or ispnHome property in Arquillian configuration must be set and point to a valid directory");
-      Validate.configurationDirectoryExists(javaHome, "Either JAVA_HOME environment variable or javaHome property in Arquillian configuration must be set and point to a valid directory");
       Validate.notNull(protocol, "protocol property in Arquillian configuration must be set");
       validateProtocol(protocol);
    }

@@ -164,7 +164,7 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
       if (!serverAvailable)
       {
          destroyProcess();
-         throw new TimeoutException(String.format("Managed server was not started within [%d] ms", configuration.getStartupTimeoutInSeconds()));
+         throw new TimeoutException(String.format("Managed server was not started within [%d] s", configuration.getStartupTimeoutInSeconds()));
       }
    }
 
