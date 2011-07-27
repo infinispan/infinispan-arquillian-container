@@ -68,13 +68,13 @@
         <dependency>
             <groupId>org.infinispan.arquillian.container</groupId>
             <artifactId>infinispan-arquillian-container-managed</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-arquillian-common</artifactId>
-            <version>7.0.0.Final</version>
+            <version>${version.jboss.as.arquillian}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
