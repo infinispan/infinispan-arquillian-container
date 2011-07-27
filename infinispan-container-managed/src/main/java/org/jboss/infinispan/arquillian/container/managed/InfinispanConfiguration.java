@@ -41,7 +41,7 @@ public class InfinispanConfiguration implements ContainerConfiguration
 
    private long workerThreads; // by default unlimited
 
-   private String cacheConfig;
+   private String cacheConfig  = System.getProperty("infinispan.server.config.file.name");
 
    private String protocol; // mandatory
 

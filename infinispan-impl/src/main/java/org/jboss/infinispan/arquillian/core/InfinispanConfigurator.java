@@ -41,7 +41,7 @@ import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
  */
 public class InfinispanConfigurator
 {
-   private final String STANDALONE_FLAG = "ispnHome";
+   private final String STANDALONE_FLAG = "protocol";  //protocol=hotrod|memcached|websocket
 
    @Inject
    @SuiteScoped

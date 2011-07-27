@@ -77,7 +77,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
       ContainerDef def = mock(ContainerDef.class);
       Map<String, String> properties = new HashMap<String, String>();
-      properties.put("ispnHome", "sample_path");
+      properties.put("protocol", "hotrod");
       when(def.getContainerProperties()).thenReturn(properties);
       when(def.getContainerName()).thenReturn(containerName);
       when(container.getContainerConfiguration()).thenReturn(def);
@@ -107,7 +107,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
       ContainerDef def = mock(ContainerDef.class);
       Map<String, String> properties = new HashMap<String, String>();
-      properties.put("ispnHome", "sample_path");
+      properties.put("protocol", "hotrod");
       when(def.getContainerProperties()).thenReturn(properties);
       when(def.getContainerName()).thenReturn(containerName);
       when(container.getContainerConfiguration()).thenReturn(def);
