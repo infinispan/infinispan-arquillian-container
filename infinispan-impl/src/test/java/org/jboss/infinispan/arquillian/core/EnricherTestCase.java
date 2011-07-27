@@ -21,6 +21,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
@@ -85,14 +88,14 @@ public class EnricherTestCase extends AbstractTestTestBase
       when(conf.getHost()).thenReturn("localhost");
       when(container.createDeployableConfiguration()).thenReturn(conf);
       fire(new SetupContainer(container));
-
+      
       EnrichedClass enrichedObject = new EnrichedClass();
       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
       getManager().inject(testEnricher);
       // enrich class via InfinispanTestEnricher
       testEnricher.enrich(enrichedObject);
-      Assert.assertNotNull(enrichedObject.info);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.info, "provider");
+      Assert.assertNotNull(enrichedObject.server);
+      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.server, "provider");
       Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
       // must correspond to container1 (portNumber=1091)
       Assert.assertEquals(portNumber, injectedPort.intValue());
@@ -119,11 +122,11 @@ public class EnricherTestCase extends AbstractTestTestBase
       MethodEnrichedClass enrichedObject = new MethodEnrichedClass();
       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
       getManager().inject(testEnricher);
-      Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", InfinispanInfo.class);
+      Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
       // enrich method parameters via InfinispanTestEnricher
       Object[] parameters = testEnricher.resolve(testMethod);
       testMethod.invoke(enrichedObject, parameters);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.localInfo, "provider");
+      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.server, "provider");
       Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
       // must correspond to container2 (portNumber=1092)
       Assert.assertEquals(portNumber, injectedPort.intValue());
@@ -131,17 +134,17 @@ public class EnricherTestCase extends AbstractTestTestBase
 
    static class EnrichedClass
    {
-      @Infinispan("container1")
-      InfinispanInfo info;
+      @InfinispanResource
+      RemoteInfinispanServer server;
    }
 
    static class MethodEnrichedClass
    {
-      InfinispanInfo localInfo;
-
-      public void testMethodEnrichment(@Infinispan("container2") InfinispanInfo info)
+      RemoteInfinispanServer server;
+      
+      public void testMethodEnrichment(@InfinispanResource("container2") RemoteInfinispanServer locServer)
       {
-         localInfo = info;
+         server = locServer;
       }
    }
 

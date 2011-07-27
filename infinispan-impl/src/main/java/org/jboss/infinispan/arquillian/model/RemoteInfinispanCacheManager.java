@@ -32,7 +32,7 @@ import org.jboss.infinispan.arquillian.utils.MBeanUtils;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class CacheManagerInfo
+public class RemoteInfinispanCacheManager
 {
    private MBeanServerConnectionProvider provider;
 
@@ -40,7 +40,7 @@ public class CacheManagerInfo
 
    private MBeanObjectsProvider mBeans;
 
-   public CacheManagerInfo(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans, String cacheManagerName)
+   public RemoteInfinispanCacheManager(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans, String cacheManagerName)
    {
       this.cacheManagerName = cacheManagerName;
       this.provider = provider;
@@ -187,13 +187,13 @@ public class CacheManagerInfo
       }
    }
 
-   public CacheInfo getCache(String cacheName)
+   public RemoteInfinispanCache getCache(String cacheName)
    {
-      return new CacheInfo(provider, mBeans, cacheName, cacheManagerName);
+      return new RemoteInfinispanCache(provider, mBeans, cacheName, cacheManagerName);
    }
 
-   public CacheInfo getDefaultCache()
+   public RemoteInfinispanCache getDefaultCache()
    {
-      return new CacheInfo(provider, mBeans, "default", cacheManagerName);
+      return new RemoteInfinispanCache(provider, mBeans, "default", cacheManagerName);
    }
 }

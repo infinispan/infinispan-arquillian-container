@@ -21,7 +21,7 @@
  */
 package org.jboss.infinispan.arquillian.core;
 
-import org.jboss.infinispan.arquillian.model.CacheManagerInfo;
+import org.jboss.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 import org.jboss.infinispan.arquillian.model.HotRodEndpoint;
 import org.jboss.infinispan.arquillian.model.MemCachedEndpoint;
 import org.jboss.infinispan.arquillian.model.RESTEndpoint;
@@ -32,11 +32,11 @@ import org.jboss.infinispan.arquillian.model.RESTEndpoint;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public interface InfinispanInfo
+public interface RemoteInfinispanServer
 {
-   public CacheManagerInfo getDefaultCacheManager();
+   public RemoteInfinispanCacheManager getDefaultCacheManager();
 
-   public CacheManagerInfo getCacheManager(String cacheManagerName);
+   public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName);
 
    public HotRodEndpoint getHotrodEndpoint();
 

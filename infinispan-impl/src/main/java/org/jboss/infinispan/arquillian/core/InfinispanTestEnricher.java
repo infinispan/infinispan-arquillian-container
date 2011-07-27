@@ -25,8 +25,8 @@ import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * Enrich test with {@link InfinispanInfo} objects, either into a field or to a
- * method parameter.
+ * Enrich test with {@link RemoteInfinispanServer} objects, either into a field
+ * or to a method parameter.
  * 
  * @author <a href="mgencur@redhat.com>Martin Gencur</a>
  * 
@@ -40,14 +40,29 @@ public class InfinispanTestEnricher implements TestEnricher
    {
       Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
 
-      for (Field field : SecurityActions.getFieldsWithAnnotation(testCase.getClass(), Infinispan.class))
+      Object value = null;
+
+      for (Field field : SecurityActions.getFieldsWithAnnotation(testCase.getClass(), InfinispanResource.class))
       {
-         Object value = null;
-         // lookup based on container's name (id)
-         value = infinispanContext.get().get(field.getAnnotation(Infinispan.class).value());
+         if ("default".equals(field.getAnnotation(InfinispanResource.class).value()))
+         {
+            if (infinispanContext.get().size() == 1)
+            {
+               value = infinispanContext.get().getOnlyServer();
+            }
+            else
+            {
+               throw new RuntimeException("Ambiguous injection point: " + field.getDeclaringClass().getName() + ":" + field.getName());
+            }
+         }
+         else
+         {
+            // lookup based on container's name (id)
+            value = infinispanContext.get().get(field.getAnnotation(InfinispanResource.class).value());
+         }
          if (value == null)
          {
-            throw new IllegalArgumentException("Retrieved a null from context, which is not valid InfinispanInfo object");
+            throw new IllegalArgumentException("Retrieved a null from context, which is not a valid RemoteInfinispanServer object");
          }
          try
          {
@@ -59,7 +74,7 @@ public class InfinispanTestEnricher implements TestEnricher
          }
          catch (Exception e)
          {
-            throw new RuntimeException("Could not set value on field " + field + " using " + value);
+            throw new RuntimeException("Could not set value on field " + field + " using " + value, e);
          }
       }
    }
@@ -70,14 +85,14 @@ public class InfinispanTestEnricher implements TestEnricher
       Class<?>[] parameterTypes = method.getParameterTypes();
       for (int i = 0; i < parameterTypes.length; i++)
       {
-         Infinispan infinispan = getInfinispanAnnotation(method.getParameterAnnotations()[i]);
-         if (infinispan != null)
+         InfinispanResource container = getContainerAnnotation(method.getParameterAnnotations()[i]);
+         if (container != null)
          {
             // lookup based on container's name (id)
-            Object value = infinispanContext.get().get(infinispan.value());
+            Object value = infinispanContext.get().get(container.value());
             if (value == null)
             {
-               throw new IllegalArgumentException("Retrieved a null from context, which is not a valid InfinispanInfo object");
+               throw new IllegalArgumentException("Retrieved a null from context, which is not a valid RemoteInfinispanServer object");
             }
             values[i] = value;
          }
@@ -85,13 +100,13 @@ public class InfinispanTestEnricher implements TestEnricher
       return values;
    }
 
-   private Infinispan getInfinispanAnnotation(Annotation[] annotations)
+   private InfinispanResource getContainerAnnotation(Annotation[] annotations)
    {
       for (Annotation annotation : annotations)
       {
-         if (annotation.annotationType() == Infinispan.class)
+         if (annotation.annotationType() == InfinispanResource.class)
          {
-            return (Infinispan) annotation;
+            return (InfinispanResource) annotation;
          }
       }
       return null;

@@ -29,7 +29,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines {@link InfinispanInfo} injection point
+ * Defines {@link RemoteInfinispanServer} injection point
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -37,12 +37,12 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
-public @interface Infinispan
+public @interface InfinispanResource
 {
    /**
     * Defines container information about which should be injected
     * 
     * @return The name of the container
     */
-   String value() default "container1";
+   String value() default "default";
 }

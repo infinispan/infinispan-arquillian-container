@@ -20,8 +20,8 @@ package org.infinispan.server.test;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.infinispan.arquillian.core.Infinispan;
-import org.jboss.infinispan.arquillian.core.InfinispanInfo;
+import org.jboss.infinispan.arquillian.core.InfinispanResource;
+import org.jboss.infinispan.arquillian.core.RemoteInfinispanServer;
 import org.jboss.infinispan.arquillian.model.CacheStatistics;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,84 +41,84 @@ import org.junit.runner.RunWith;
 public class ServerInfoTest
 {
    // container1 and container2 defined in arquillian.xml
-   @Infinispan("container1")
-   InfinispanInfo info1;
+   @InfinispanResource("container1")
+   RemoteInfinispanServer server1;
 
-   @Infinispan("container2")
-   InfinispanInfo info2;
+   @InfinispanResource("container2")
+   RemoteInfinispanServer server2;
 
    @Test
    public void shouldBeAbleToSeeStatisticsChanging()
    {
-      RemoteCacheManager m = new RemoteCacheManager(info1.getHotrodEndpoint().getInetAddress().getHostName(), info1.getHotrodEndpoint().getPort());
+      RemoteCacheManager m = new RemoteCacheManager(server1.getHotrodEndpoint().getInetAddress().getHostName(), server1.getHotrodEndpoint().getPort());
       RemoteCache<String, Integer> cache = m.getCache();
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getStores() == 0);
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 0);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getStores() == 0);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 0);
       cache.put("key", 10);
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getStores() == 1);
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 0);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getStores() == 1);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 0);
       cache.remove("key");
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getStores() == 1);
-      Assert.assertTrue(info1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 1);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getStores() == 1);
+      Assert.assertTrue(server1.getDefaultCacheManager().getDefaultCache().getRemoveHits() == 1);
    }
 
    @Test
    public void shouldRetrieveGeneralInformation() throws Exception
    {
       System.out.println("\n----- Retrieving General Information -----\n");
-      System.out.println("Memcached port: " + info1.getMemcachedEndpoint().getPort());
-      System.out.println("Memcached hostname: " + info1.getMemcachedEndpoint().getInetAddress());
-      System.out.println("Hotrod port: " + info1.getHotrodEndpoint().getPort());
-      System.out.println("Hotrod hostname: " + info1.getHotrodEndpoint().getInetAddress());
+      System.out.println("Memcached port: " + server1.getMemcachedEndpoint().getPort());
+      System.out.println("Memcached hostname: " + server1.getMemcachedEndpoint().getInetAddress());
+      System.out.println("Hotrod port: " + server1.getHotrodEndpoint().getPort());
+      System.out.println("Hotrod hostname: " + server1.getHotrodEndpoint().getInetAddress());
       // REST available only for JBossAS with embedded Infinispan (Enterprise
       // Data Grid)
-      System.out.println("REST hostname: " + info1.getRESTEndpoint().getInetAddress());
-      System.out.println("REST context path: " + info1.getRESTEndpoint().getContextPath());
+      System.out.println("REST hostname: " + server1.getRESTEndpoint().getInetAddress());
+      System.out.println("REST context path: " + server1.getRESTEndpoint().getContextPath());
    }
 
    @Test
    public void shouldRetrieveCacheManagerInformation()
    {
       System.out.println("\n----- Retrieving Cache Manager Information -----\n");
-      System.out.println("Created cache count:  " + info1.getCacheManager("default").getCreatedCacheCount());
-      System.out.println("Cache manager status: " + info1.getDefaultCacheManager().getCacheManagerStatus());
-      System.out.println("Cache name:           " + info1.getDefaultCacheManager().getCacheName());
-      System.out.println("Cluster members:      " + info1.getDefaultCacheManager().getClusterMembers());
-      System.out.println("Cluster size:         " + info1.getDefaultCacheManager().getClusterSize());
-      System.out.println("Created cache count:  " + info1.getDefaultCacheManager().getCreatedCacheCount());
-      System.out.println("Defined cache count:  " + info1.getDefaultCacheManager().getDefinedCacheCount());
-      System.out.println("Defined cache names:  " + info1.getDefaultCacheManager().getDefinedCacheNames());
-      System.out.println("Node address:         " + info1.getDefaultCacheManager().getNodeAddress());
-      System.out.println("Physical address:     " + info1.getDefaultCacheManager().getPhysicalAddresses());
-      System.out.println("Running cache count:  " + info1.getDefaultCacheManager().getRunningCacheCount());
-      System.out.println("Version:              " + info1.getDefaultCacheManager().getVersion());
+      System.out.println("Created cache count:  " + server1.getCacheManager("default").getCreatedCacheCount());
+      System.out.println("Cache manager status: " + server1.getDefaultCacheManager().getCacheManagerStatus());
+      System.out.println("Cache name:           " + server1.getDefaultCacheManager().getCacheName());
+      System.out.println("Cluster members:      " + server1.getDefaultCacheManager().getClusterMembers());
+      System.out.println("Cluster size:         " + server1.getDefaultCacheManager().getClusterSize());
+      System.out.println("Created cache count:  " + server1.getDefaultCacheManager().getCreatedCacheCount());
+      System.out.println("Defined cache count:  " + server1.getDefaultCacheManager().getDefinedCacheCount());
+      System.out.println("Defined cache names:  " + server1.getDefaultCacheManager().getDefinedCacheNames());
+      System.out.println("Node address:         " + server1.getDefaultCacheManager().getNodeAddress());
+      System.out.println("Physical address:     " + server1.getDefaultCacheManager().getPhysicalAddresses());
+      System.out.println("Running cache count:  " + server1.getDefaultCacheManager().getRunningCacheCount());
+      System.out.println("Version:              " + server1.getDefaultCacheManager().getVersion());
    }
 
    @Test
    public void shouldRetrieveCacheInformation()
    {
       System.out.println("\n----- Retrieving Cache Information -----\n");
-      System.out.println("Default cache name:   " + info2.getCacheManager("default").getCache("default").getCacheName());
-      System.out.println("Named cache name:     " + info2.getCacheManager("default").getCache("namedCache").getCacheName());
-      System.out.println("Cache name:           " + info2.getDefaultCacheManager().getDefaultCache().getCacheName());
-      System.out.println("Cache status:         " + info2.getDefaultCacheManager().getDefaultCache().getCacheStatus());
-      System.out.println("Average read time:    " + info2.getDefaultCacheManager().getDefaultCache().getAverageReadTime());
-      System.out.println("Average write time:   " + info2.getDefaultCacheManager().getDefaultCache().getAverageWriteTime());
-      System.out.println("Elapsed time:         " + info2.getDefaultCacheManager().getDefaultCache().getElapsedTime());
-      System.out.println("Evictions:            " + info2.getDefaultCacheManager().getDefaultCache().getEvictions());
-      System.out.println("Hit ratio:            " + info2.getDefaultCacheManager().getDefaultCache().getHitRatio());
-      System.out.println("Hits:                 " + info2.getDefaultCacheManager().getDefaultCache().getHits());
-      System.out.println("Misses:               " + info2.getDefaultCacheManager().getDefaultCache().getMisses());
-      System.out.println("Number of entries:    " + info2.getDefaultCacheManager().getDefaultCache().getNumberOfEntries());
-      System.out.println("Read-write ratio:     " + info2.getDefaultCacheManager().getDefaultCache().getReadWriteRatio());
-      System.out.println("Remove hits:          " + info2.getDefaultCacheManager().getDefaultCache().getRemoveHits());
-      System.out.println("Remote misses:        " + info2.getDefaultCacheManager().getDefaultCache().getRemoveMisses());
-      System.out.println("Stores:               " + info2.getDefaultCacheManager().getDefaultCache().getStores());
-      System.out.println("Time since reset:     " + info2.getDefaultCacheManager().getDefaultCache().getTimeSinceReset());
+      System.out.println("Default cache name:   " + server2.getCacheManager("default").getCache("default").getCacheName());
+      System.out.println("Named cache name:     " + server2.getCacheManager("default").getCache("namedCache").getCacheName());
+      System.out.println("Cache name:           " + server2.getDefaultCacheManager().getDefaultCache().getCacheName());
+      System.out.println("Cache status:         " + server2.getDefaultCacheManager().getDefaultCache().getCacheStatus());
+      System.out.println("Average read time:    " + server2.getDefaultCacheManager().getDefaultCache().getAverageReadTime());
+      System.out.println("Average write time:   " + server2.getDefaultCacheManager().getDefaultCache().getAverageWriteTime());
+      System.out.println("Elapsed time:         " + server2.getDefaultCacheManager().getDefaultCache().getElapsedTime());
+      System.out.println("Evictions:            " + server2.getDefaultCacheManager().getDefaultCache().getEvictions());
+      System.out.println("Hit ratio:            " + server2.getDefaultCacheManager().getDefaultCache().getHitRatio());
+      System.out.println("Hits:                 " + server2.getDefaultCacheManager().getDefaultCache().getHits());
+      System.out.println("Misses:               " + server2.getDefaultCacheManager().getDefaultCache().getMisses());
+      System.out.println("Number of entries:    " + server2.getDefaultCacheManager().getDefaultCache().getNumberOfEntries());
+      System.out.println("Read-write ratio:     " + server2.getDefaultCacheManager().getDefaultCache().getReadWriteRatio());
+      System.out.println("Remove hits:          " + server2.getDefaultCacheManager().getDefaultCache().getRemoveHits());
+      System.out.println("Remote misses:        " + server2.getDefaultCacheManager().getDefaultCache().getRemoveMisses());
+      System.out.println("Stores:               " + server2.getDefaultCacheManager().getDefaultCache().getStores());
+      System.out.println("Time since reset:     " + server2.getDefaultCacheManager().getDefaultCache().getTimeSinceReset());
    }
 
    @Test
-   public void shouldRetrieveCacheInformationUsingGenericApproach(@Infinispan("container2") InfinispanInfo info3)
+   public void shouldRetrieveCacheInformationUsingGenericApproach(@InfinispanResource("container2") RemoteInfinispanServer info3)
    {
       System.out.println("\n----- Retrieving Cache Information using semi-generic approach -----\n");
       System.out.println("Average read time:    " + info3.getDefaultCacheManager().getDefaultCache().getStatistics(CacheStatistics.AVERAGE_READ_TIME));

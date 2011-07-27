@@ -33,7 +33,7 @@ import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 
 /**
- * Creates {@link InfinispanContext} and stores {@link InfinispanInfo} object
+ * Creates {@link InfinispanContext} and stores {@link RemoteInfinispanServer} object
  * related to the particular container.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
@@ -56,7 +56,7 @@ public class InfinispanConfigurator
          infinispanContext.set(new InfinispanContext());
       }
 
-      InfinispanInfo info = null;
+      RemoteInfinispanServer server = null;
 
       if (def.getContainerProperties().containsKey(STANDALONE_FLAG))
       {
@@ -64,7 +64,7 @@ public class InfinispanConfigurator
          try
          {
             conf = (InfinispanConfiguration) event.getContainer().createDeployableConfiguration();
-            info = new InfinispanInfoImpl(conf.getHost(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.STANDALONE));
+            server = new RemoteInfinispanServerImpl(conf.getHost(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.STANDALONE));
          }
          catch (Exception e)
          {
@@ -77,7 +77,7 @@ public class InfinispanConfigurator
          try
          {
             conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
-            info = new InfinispanInfoImpl(conf.getBindAddress().getHostName(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.EDG));
+            server = new RemoteInfinispanServerImpl(conf.getBindAddress().getHostName(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.EDG));
          }
          catch (Exception e)
          {
@@ -85,6 +85,6 @@ public class InfinispanConfigurator
          }
       }
       
-      infinispanContext.get().add(event.getContainer().getContainerConfiguration().getContainerName(), info);
+      infinispanContext.get().add(event.getContainer().getContainerConfiguration().getContainerName(), server);
    }
 }

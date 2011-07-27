@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Infinispan context holds {@link InfinispanInfo} objects for all containers
+ * Infinispan context holds {@link RemoteInfinispanServer} objects for all containers
  * defined in arquillian.xml
  * 
  * @author <a href="mgencur@redhat.com>Martin Gencur</a>
@@ -28,16 +28,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class InfinispanContext
 {
-   private Map<String, InfinispanInfo> cache = new ConcurrentHashMap<String, InfinispanInfo>();
+   private Map<String, RemoteInfinispanServer> cache = new ConcurrentHashMap<String, RemoteInfinispanServer>();
 
-   public InfinispanInfo get(String containerId)
+   public RemoteInfinispanServer get(String containerId)
    {
       return cache.get(containerId);
    }
-
-   public InfinispanContext add(String containerId, InfinispanInfo info)
+   
+   public RemoteInfinispanServer getOnlyServer()
    {
-      cache.put(containerId, info);
+       if (cache.size() == 1)
+       {
+           return cache.values().iterator().next();
+       }
+       else
+       {
+           throw new RuntimeException("The InfinispanContext contains more than one container");
+       }
+   }
+
+   public InfinispanContext add(String containerId, RemoteInfinispanServer server)
+   {
+      cache.put(containerId, server);
       return this;
    }
 
@@ -45,5 +57,10 @@ public class InfinispanContext
    {
       cache.remove(containerId);
       return this;
+   }
+   
+   public int size()
+   {
+       return cache.size();
    }
 }

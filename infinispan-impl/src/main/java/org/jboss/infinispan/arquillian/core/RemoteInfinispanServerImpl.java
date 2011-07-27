@@ -23,7 +23,7 @@ package org.jboss.infinispan.arquillian.core;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import org.jboss.infinispan.arquillian.model.CacheManagerInfo;
+import org.jboss.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 import org.jboss.infinispan.arquillian.model.HotRodEndpoint;
 import org.jboss.infinispan.arquillian.model.MemCachedEndpoint;
 import org.jboss.infinispan.arquillian.model.RESTEndpoint;
@@ -32,42 +32,42 @@ import org.jboss.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 import org.jboss.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 
 /**
- * Implementation of {@link InfinispanInfo}. This class is injected into a
+ * Implementation of {@link RemoteInfinispanServer}. This class is injected into a
  * testcase and provides information about caches, cache managers and server
  * module endpoints (hotrod, memcached, REST).
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class InfinispanInfoImpl implements InfinispanInfo
+public class RemoteInfinispanServerImpl implements RemoteInfinispanServer
 {
    private MBeanServerConnectionProvider provider;
 
    private MBeanObjectsProvider mBeans;
 
-   public InfinispanInfoImpl(String host, int jmxPort, MBeanObjectsProvider mBeans)
+   public RemoteInfinispanServerImpl(String host, int jmxPort, MBeanObjectsProvider mBeans)
    {
       this.provider = new MBeanServerConnectionProvider(getInetAddress(host), jmxPort);
       this.mBeans = mBeans;
    }
 
    @Override
-   public CacheManagerInfo getDefaultCacheManager()
+   public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
       if (mBeans.getDomain().equals(Domain.EDG))
       {
-         return new CacheManagerInfo(provider, mBeans, "default");
+         return new RemoteInfinispanCacheManager(provider, mBeans, "default");
       }
       else
       {
-         return new CacheManagerInfo(provider, mBeans, "DefaultCacheManager");
+         return new RemoteInfinispanCacheManager(provider, mBeans, "DefaultCacheManager");
       }     
    }
 
    @Override
-   public CacheManagerInfo getCacheManager(String cacheManagerName)
+   public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
    {
-      return new CacheManagerInfo(provider, mBeans, cacheManagerName);
+      return new RemoteInfinispanCacheManager(provider, mBeans, cacheManagerName);
    }
 
    @Override
