@@ -35,6 +35,13 @@ public class InfinispanContext
       return cache.get(containerId);
    }
    
+   /**
+    * 
+    * Retrieves the only {@link RemoteInfinispanServer} stored in this context. If there are 
+    * more than one server in the context, throw a {@link RuntimeException}.
+    * 
+    * @return the only server instance
+    */
    public RemoteInfinispanServer getOnlyServer()
    {
        if (cache.size() == 1)
@@ -47,18 +54,39 @@ public class InfinispanContext
        }
    }
 
+   /**
+    * 
+    * Stores a {@link RemoteInfinispanServer} under container's identifier in the context.
+    * 
+    * @param containerId container identifier being used for lookup of the container
+    * @param server server instance
+    * @return this context
+    */
    public InfinispanContext add(String containerId, RemoteInfinispanServer server)
    {
       cache.put(containerId, server);
       return this;
    }
 
+   /**
+    * 
+    * Removes a container from the context based on its identifier.
+    * 
+    * @param containerId container's identifier
+    * @return this context
+    */
    public InfinispanContext remove(String containerId)
    {
       cache.remove(containerId);
       return this;
    }
    
+   /**
+    * 
+    * Returns the number of servers stored in this context.
+    * 
+    * @return the number of servers stored in this context
+    */
    public int size()
    {
        return cache.size();

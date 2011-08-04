@@ -29,13 +29,23 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 /**
- * Helper methods for accessing Infinispan data via JMX.
+ * MBeanUtil class contains helper methods for accessing Infinispan data via JMX.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
 public class MBeanUtils
 {
+   /**
+    * 
+    * Returns an MBean attribute according to its name.
+    * 
+    * @param provider the MBean server connection provider
+    * @param mbean the name of the MBean
+    * @param attr the name of the attribute being retrieved
+    * @return the value of the attribute
+    * 
+    */
    public static String getMBeanAttribute(MBeanServerConnectionProvider provider, String mbean, String attr) throws Exception
    {
       try
@@ -48,6 +58,15 @@ public class MBeanUtils
       }
    }
 
+   /**
+    * 
+    * Returns names of MBeans according to the search pattern.
+    * 
+    * @param provider the MBean server connection provider
+    * @param pattern the string pattern
+    * @return the list of MBeans found under this pattern
+    * 
+    */
    public static List<String> getMBeanNamesByPattern(MBeanServerConnectionProvider provider, String pattern)
    {
       try

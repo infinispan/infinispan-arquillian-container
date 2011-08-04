@@ -28,8 +28,8 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanUtils;
 
 /**
- * Hold MemCached server module's port number. Can be retrieved inside a test to
- * find out on which port MemCached is running.
+ * Holds MemCached server module's Internet address and port number. Can be retrieved inside a test to
+ * find out on which address/port the MemCached server module is running.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -46,6 +46,12 @@ public class MemCachedEndpoint
       this.mBeans = mBeans;
    }
 
+   /**
+    * 
+    * Retrieves an Internet address on which the MemCached server module is running.
+    * 
+    * @return the Internet address on which the MemCached server module is running
+    */
    public InetAddress getInetAddress()
    {
       String hostname;
@@ -60,6 +66,12 @@ public class MemCachedEndpoint
       }
    }
 
+   /**
+    * 
+    * Retrieves a port on which the MemCached server module is running.
+    * 
+    * @return the port on which the MemCached server module is running
+    */
    public int getPort()
    {
       String port;

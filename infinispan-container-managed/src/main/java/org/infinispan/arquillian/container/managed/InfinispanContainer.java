@@ -49,8 +49,13 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * {@link org.jboss.arquillian.container.spi.client.container.DeployableContainer}
  * implementation for the Infinispan container.
  * 
+ * {@link InfinispanContainer} is responsible for starting and stopping standalone
+ * Infinispan server instances. Each server instance is preconfigured using properties
+ * specified in {@link InfinispanConfiguration}. Default values for these properties
+ * can be overridden inside Arquillian's configuration file.
+ * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
+ * 
  */
 public class InfinispanContainer implements DeployableContainer<InfinispanConfiguration>
 {

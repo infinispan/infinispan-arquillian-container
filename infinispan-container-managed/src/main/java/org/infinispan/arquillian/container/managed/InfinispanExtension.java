@@ -21,10 +21,11 @@ import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * InfinispanExtension
+ * InfinispanExtension responsible for registering {@link InfinispanContainer} as
+ * a service, being utilized by Arquillian framework.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
+ *
  */
 public class InfinispanExtension implements LoadableExtension
 {

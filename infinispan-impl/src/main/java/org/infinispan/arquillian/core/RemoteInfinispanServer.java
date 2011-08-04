@@ -27,21 +27,60 @@ import org.infinispan.arquillian.model.RESTEndpoint;
 import org.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 
 /**
- * An entry point to retrieving various information about Infinispan server.
+ * An entry point to getting various information about remote Infinispan server.
+ * Implementations of this interface are neither supposed to be able to change any
+ * configuration of remote Infinispan server nor control its lifecycle.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
 public interface RemoteInfinispanServer
 {
+   /**
+    * 
+    * Returns an object containing all information available for a default cache manager.
+    * 
+    * @return the object for querying the default cache manager
+    */
    public RemoteInfinispanCacheManager getDefaultCacheManager();
-
+   
+   /**
+    * 
+    * Returns an object containing all information available for a named cache manager.
+    * 
+    * @param cacheManagerName the name of the cache manager
+    * @return the object for querying the named cache manager
+    */
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName);
 
+   /**
+    * Returns an object containing information about HotRod endpoint (e.g. hostname, port to which
+    * this endpoint is bound).
+    * 
+    * @return the HotRod endpoint
+    * 
+    */
    public HotRodEndpoint getHotrodEndpoint();
 
+   /**
+    * Returns an object containing information about MemCached endpoint (e.g. hostname, port to which
+    * this endpoint is bound).
+    * 
+    * @return the MemCached endpoint
+    * 
+    */
    public MemCachedEndpoint getMemcachedEndpoint();
 
+   /**
+    * Returns an object containing information about REST endpoint (e.g. hostname, REST server context path to which
+    * this endpoint is bound).
+    * 
+    * The REST endpoint is only available for an JBoss AS with Infinispan embedded, it is not available for 
+    * a standalone Infinispan server.
+    * 
+    * @return the REST endpoint
+    * 
+    */
    public RESTEndpoint getRESTEndpoint();
 
    // not supported - not desired

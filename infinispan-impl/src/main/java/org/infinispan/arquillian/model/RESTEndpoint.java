@@ -28,9 +28,9 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanUtils;
 
 /**
- * Hold REST server module's context path. Can be retrieved inside a test to
- * find out on which contextPath REST service is running. Available only for
- * EDG, not for community Infinispan Server.
+ * Holds REST server module's inet address and context path. Can be retrieved inside 
+ * a test to find out on which contextPath the REST server module is running. Available only for
+ * the Enterprise Data Grid, not for a standalone Infinispan server.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -49,6 +49,12 @@ public class RESTEndpoint
       this.mBeans = mBeans;
    }
 
+   /**
+    * 
+    * Retrieves an Internet address on which the REST server module is running.
+    * 
+    * @return the Internet address on which the REST server module is running
+    */
    public InetAddress getInetAddress()
    {
       String hostname;
@@ -63,6 +69,12 @@ public class RESTEndpoint
       }
    }
 
+   /**
+    * 
+    * Retrieves a context path on which the REST server module is running.
+    * 
+    * @return the context path on which the REST server module is running
+    */
    public String getContextPath()
    {
       return contextPath;

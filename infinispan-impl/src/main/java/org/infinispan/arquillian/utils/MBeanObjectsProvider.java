@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * MBean objects for accessing cache,cache manager, cache statistics mbeans and
+ * MBean objects for accessing cache, cache manager, cache statistics MBeans and
  * server module endpoints via JMX.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
@@ -34,12 +34,21 @@ import java.util.regex.Pattern;
  */
 public class MBeanObjectsProvider
 {
+   /**
+    * Holds domain name for JMX
+    */
    public String domain;
 
    public String hotRodServerMBean;
 
    public String memCachedServerMBean;
 
+   /**
+    * 
+    * Creates a new MBeanObjectsProvider. 
+    * 
+    * @param domain specifies which JMX domain should be used, some predefined values can be found in {@link Domain}
+    */
    public MBeanObjectsProvider(String domain)
    {
       this.domain = domain;
@@ -47,6 +56,14 @@ public class MBeanObjectsProvider
       this.memCachedServerMBean = domain + ":type=Server,name=Memcached,component=Transport";
    }
 
+   /**
+    * 
+    * Returns an MBean for the cache manager.
+    * 
+    * @param provider the MBean server connection provider
+    * @param cacheManagerName the cache manager name
+    * @return the cache manager MBean
+    */
    public String getCacheManagerMBean(MBeanServerConnectionProvider provider, String cacheManagerName)
    {  
       //e.g. org.infinispan:type=CacheManager,name="default",component=CacheManager
@@ -62,6 +79,15 @@ public class MBeanObjectsProvider
       }
    }
 
+   /**
+    * 
+    * Returns an MBean for the cache.
+    * 
+    * @param provider the MBean server connection provider
+    * @param cacheName the cache name
+    * @param cacheManagerName the cache manager name
+    * @return the cache MBean
+    */
    public String getCacheMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache mbeans
@@ -85,6 +111,15 @@ public class MBeanObjectsProvider
       }
    }
 
+   /**
+    * 
+    * Returns an MBean for the cache statistics.
+    * 
+    * @param provider the MBean server connection provider
+    * @param cacheName the cache name
+    * @param cacheManagerName the cache manager name
+    * @return the cache statistics MBean
+    */
    public String getCacheStatisticsMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache statistics mbeans
@@ -108,11 +143,23 @@ public class MBeanObjectsProvider
       }
    }
 
+   /**
+    * 
+    * Returns a HotRod server MBean.
+    * 
+    * @return the HotRod server MBean
+    */
    public String getHorRodServerMBean()
    {
       return hotRodServerMBean;
    }
 
+   /**
+    * 
+    * Returns a MemCached server MBean.
+    * 
+    * @return the MemCached server MBean
+    */
    public String getMemCachedServerMBean()
    {
       return memCachedServerMBean;
@@ -128,16 +175,35 @@ public class MBeanObjectsProvider
       return namePattern.matcher(from).replaceFirst("$1");
    }
 
+   /**
+    * 
+    * Returns a domain name for JMX.
+    * 
+    * @return the domain name for JMX
+    */
    public String getDomain()
    {
       return domain;
    }
 
+   /**
+    * 
+    * Sets a domain name for JMX.
+    * 
+    * @param domain the name of the domain
+    */
    public void setDomain(String domain)
    {
       this.domain = domain;
    }
    
+   /**
+    * A helper class containing domain name constants for standalone Infinispan server and 
+    * Infinispan embedded in JBoss Application Server
+    *  
+    * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
+    * 
+    */
    public class Domain
    {
       public static final String STANDALONE = "org.infinispan";
