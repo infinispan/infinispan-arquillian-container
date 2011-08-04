@@ -122,19 +122,6 @@ public class RemoteInfinispanCacheManager
       return Integer.parseInt(runningCacheCount);
    }
 
-   //TODO: remove this method - not available for a cache manager
-   public String getCacheName()
-   {
-      try
-      {
-         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheManagerMBean(provider, cacheManagerName), CacheManagerAttributes.RUNNING_CACHE_COUNT);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Could not get cacheName", e);
-      }
-   }
-
    /**
     * 
     * Returns size of the cluster in number of nodes.

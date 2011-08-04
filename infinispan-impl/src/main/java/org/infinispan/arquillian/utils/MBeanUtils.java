@@ -46,7 +46,7 @@ public class MBeanUtils
     * @return the value of the attribute
     * 
     */
-   public static String getMBeanAttribute(MBeanServerConnectionProvider provider, String mbean, String attr) throws Exception
+   public static String getMBeanAttribute(MBeanServerConnectionProvider provider, String mbean, String attr)
    {
       try
       {

@@ -69,7 +69,6 @@ public class ServerInfoTest
       System.out.println("\n----- Retrieving Cache Manager Information -----\n");
       System.out.println("Created cache count:  " + server1.getCacheManager("DefaultCacheManager").getCreatedCacheCount());
       System.out.println("Cache manager status: " + server1.getDefaultCacheManager().getCacheManagerStatus());
-      System.out.println("Cache name:           " + server1.getDefaultCacheManager().getCacheName());
       System.out.println("Cluster members:      " + server1.getDefaultCacheManager().getClusterMembers());
       System.out.println("Cluster size:         " + server1.getDefaultCacheManager().getClusterSize());
       System.out.println("Created cache count:  " + server1.getDefaultCacheManager().getCreatedCacheCount());
