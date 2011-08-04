@@ -22,8 +22,8 @@
 package org.infinispan.arquillian.model;
 
 /**
- * An enum of available cache statistics. This should be used from within a test
- * to specify which statistics one want to retrieve.
+ * An enumeration of available cache statistics. This should be used from within a test
+ * to specify which statistics should be retrieved.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 

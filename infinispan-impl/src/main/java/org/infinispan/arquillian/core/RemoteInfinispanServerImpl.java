@@ -33,9 +33,29 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 
 /**
- * Implementation of {@link RemoteInfinispanServer}. This class is injected into a
- * testcase and provides information about caches, cache managers and server
+ * The implementation of {@link RemoteInfinispanServer}. An instance of this class can
+ * be injected into a testcase and provide information about caches, cache managers and server
  * module endpoints (hotrod, memcached, REST).
+ * 
+ * When using standalone Infinispan server, there's always only one of the following server modules 
+ * available at any time:
+ * 
+ * <ul>
+ *    <li>hotrod</li>
+ *    <li>memcached</li>
+ * </ul>
+ * 
+ * When using JBoss AS with Infinispan embedded, there are always all endpoints 
+ * available simultaneously:
+ * 
+ * <ul>
+ *    <li>hotrod</li>
+ *    <li>memcached</li>
+ *    <li>REST</li>
+ * </ul>
+ * 
+ * @see RemoteInfinispanServer
+ * 
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 

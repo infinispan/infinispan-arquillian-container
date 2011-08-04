@@ -29,7 +29,53 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines {@link RemoteInfinispanServer} injection point
+ * Defines an injection point where Infinispan resources should be injected.
+ * InfinispanResource annotation can be used either on test class 
+ * fields or method parameters. Currently, only {@link RemoteInfinispanServer}
+ * can be injected.<br/><br/>  
+ * 
+ * Injection into fields:
+ * 
+ * <blockquote>
+ * <pre>
+ *    <code>
+ *    //when there's only one server preconfigured
+ *    &#64;InfinispanResource
+ *    RemoteInfinispanServer server;
+ *    </code>
+ *    or
+ *    <code>
+ *    //when there are more than one server preconfigured
+ *    &#64;InfinispanResource("1")          
+ *    RemoteInfinispanServer server1;
+ *    
+ *    &#64;InfinispanResource("2")
+ *    RemoteInfinispanServer server2;
+ *    </code>
+ * </pre>
+ * </blockquote>
+ * 
+ * 
+ * Injection into method parameters:
+ * 
+ * <blockquote>
+ * <pre>
+ *    <code>
+ *    void testMethod(&#64;InfinispanResource server) { ... }
+ *    </code>
+ *    or
+ *    <code>
+ *    void testMethod(&#64;InfinispanResource("1") server1, &#64;InfinispanResource("2") server1) { ... }
+ *    </code>
+ * </pre>
+ * </blockquote>
+ * 
+ * When no server identifier is specified inside parentheses, it is supposed that there is only
+ * one server/container preconfigured in arquillian.xml and this container will be chosen,
+ * regardless of its identifier.
+ * 
+ * When there's an identifier specified, the container with the identifier will be chosen for this
+ * injection point.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -40,9 +86,9 @@ import java.lang.annotation.Target;
 public @interface InfinispanResource
 {
    /**
-    * Defines container information about which should be injected
+    * Defines container information about which should be injected.
     * 
-    * @return The name of the container
+    * @return the name of the container
     */
    String value() default "default";
 }

@@ -26,8 +26,12 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanUtils;
 
 /**
- * Retrieve various information about a cache manager, either with default name
- * or another name specified for exposing via JMX.
+ * Retrieves various information about a cache manager, either default or
+ * named one. Object of this class holds a name of the cache manager that will
+ * be queried via JMX.
+ * 
+ * It is also possible to retrieve objects containing information about
+ * individual caches bound to this cache manager.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -36,10 +40,21 @@ public class RemoteInfinispanCacheManager
 {
    private MBeanServerConnectionProvider provider;
 
+   /**
+    * Holds the name of the cache manager.
+    */
    private String cacheManagerName;
 
    private MBeanObjectsProvider mBeans;
 
+   /**
+    * 
+    * Creates a new RemoteInfinispanCacheManager.
+    * 
+    * @param provider an MBean server connection provider
+    * @param mBeans an MBean objects provider
+    * @param cacheManagerName the name of the cache manager that this object should be bound to
+    */
    public RemoteInfinispanCacheManager(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans, String cacheManagerName)
    {
       this.cacheManagerName = cacheManagerName;
@@ -47,6 +62,12 @@ public class RemoteInfinispanCacheManager
       this.mBeans = mBeans;
    }
 
+   /**
+    * 
+    * Returns a total number of created caches, including the default cache.
+    * 
+    * @return the total number of created caches, including the default cache
+    */
    public int getCreatedCacheCount()
    {
       String createdCacheCount = null;
@@ -61,6 +82,12 @@ public class RemoteInfinispanCacheManager
       return Integer.parseInt(createdCacheCount);
    }
 
+   /**
+    * 
+    * Returns a total number of defined caches, excluding the default cache.
+    * 
+    * @return the total number of defined caches, excluding the default cache
+    */
    public int getDefinedCacheCount()
    {
       String definedCacheCount = null;
@@ -75,6 +102,12 @@ public class RemoteInfinispanCacheManager
       return Integer.parseInt(definedCacheCount);
    }
 
+   /**
+    * 
+    * Returns a total number of running caches, including the default cache.
+    * 
+    * @return the total number of running caches, including the default cache
+    */
    public int getRunningCacheCount()
    {
       String runningCacheCount = null;
@@ -89,18 +122,12 @@ public class RemoteInfinispanCacheManager
       return Integer.parseInt(runningCacheCount);
    }
 
-   public String getCacheName()
-   {
-      try
-      {
-         return MBeanUtils.getMBeanAttribute(provider, mBeans.getCacheManagerMBean(provider, cacheManagerName), CacheManagerAttributes.RUNNING_CACHE_COUNT);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Could not get cacheName", e);
-      }
-   }
-
+   /**
+    * 
+    * Returns size of the cluster in number of nodes.
+    * 
+    * @return the size of the cluster in number of nodes
+    */
    public int getClusterSize()
    {
       String clusterSize = null;
@@ -115,6 +142,12 @@ public class RemoteInfinispanCacheManager
       return Integer.parseInt(clusterSize);
    }
 
+   /**
+    * 
+    * Returns a status of the cache manager instance. 
+    * 
+    * @return the status of the cache manager instance
+    */
    public String getCacheManagerStatus()
    {
       try
@@ -127,6 +160,12 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns a network address associated with this instance.
+    * 
+    * @return the network address associated with this instance
+    */
    public String getNodeAddress()
    {
       try
@@ -139,6 +178,12 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns the Infinispan version.
+    * 
+    * @return the Infinispan version
+    */
    public String getVersion()
    {
       try
@@ -151,6 +196,12 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns defined cache names and their statuses, the default cache is not included in this representation.
+    * 
+    * @return the defined cache names and their statuses
+    */
    public String getDefinedCacheNames()
    {
       try
@@ -163,6 +214,12 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns a list of members in the cluster.
+    * 
+    * @return the list of members in the cluster
+    */
    public String getClusterMembers()
    {
       try
@@ -175,6 +232,12 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns physical network addresses associated with this instance.
+    * 
+    * @return the physical network addresses associated with this instance
+    */
    public String getPhysicalAddresses()
    {
       try
@@ -187,11 +250,24 @@ public class RemoteInfinispanCacheManager
       }
    }
 
+   /**
+    * 
+    * Returns a cache as per its name, defined under this cache manager.
+    * 
+    * @param cacheName the cache name
+    * @return the named cache
+    */
    public RemoteInfinispanCache getCache(String cacheName)
    {
       return new RemoteInfinispanCache(provider, mBeans, cacheName, cacheManagerName);
    }
 
+   /**
+    * 
+    * Returns the default cache defined under this cache manager.
+    * 
+    * @return the default cache defined under this cache manager
+    */
    public RemoteInfinispanCache getDefaultCache()
    {
       return new RemoteInfinispanCache(provider, mBeans, "default", cacheManagerName);

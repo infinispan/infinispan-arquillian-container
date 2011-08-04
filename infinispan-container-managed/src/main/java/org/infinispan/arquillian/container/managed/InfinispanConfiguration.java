@@ -25,10 +25,15 @@ import org.jboss.arquillian.container.spi.client.deployment.Validate;
  * {@link org.jboss.arquillian.container.spi.client.container.ContainerConfiguration}
  * implementation for the Infinispan container.
  * 
- * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * @version $Revision: $
+ * The configuration class contains attributes which can be set via properties
+ * specified in an arquillian.xml configuration file. Only the
+ * {@link InfinispanConfiguration#protocol} attribute is mandatory. Furthermore,
+ * the {@link InfinispanConfiguration#ispnHome} attribute should be specified (either
+ * in arquillian.xml file or as an environment property called ISPN_HOME)
  * 
- *          TODO: retrieve and pass environment properties (-D<name>[=<value>])
+ * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
+ * 
+ * TODO: retrieve and pass environment properties (-D<name>[=<value>])
  * 
  */
 public class InfinispanConfiguration implements ContainerConfiguration
@@ -41,9 +46,9 @@ public class InfinispanConfiguration implements ContainerConfiguration
 
    private long workerThreads; // by default unlimited
 
-   private String cacheConfig  = System.getProperty("infinispan.server.config.file.name");
+   private String cacheConfig = System.getProperty("infinispan.server.config.file.name");
 
-   private String protocol; // mandatory
+   private String protocol; // mandatory, possible values are hotrod, memcached, websocket
 
    private int idleTimeout = -1;
 
@@ -74,7 +79,7 @@ public class InfinispanConfiguration implements ContainerConfiguration
    private int startupTimeoutInSeconds = 30;
 
    private int shutdownTimeoutInSeconds = 20;
-   
+
    private int jmxPort = 1090;
 
    public void validate() throws ConfigurationException

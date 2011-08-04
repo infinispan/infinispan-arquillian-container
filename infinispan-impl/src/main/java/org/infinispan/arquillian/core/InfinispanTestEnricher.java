@@ -25,8 +25,8 @@ import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * Enrich test with {@link RemoteInfinispanServer} objects, either into a field
- * or to a method parameter.
+ * InfinispanTestEnricher enriches tests with {@link RemoteInfinispanServer} objects, 
+ * storing them either into fields or method parameters.
  * 
  * @author <a href="mgencur@redhat.com>Martin Gencur</a>
  * 
@@ -36,6 +36,12 @@ public class InfinispanTestEnricher implements TestEnricher
    @Inject
    private Instance<InfinispanContext> infinispanContext;
 
+   /**
+    * Enriches fields on a test class object with {@link RemoteInfinispanServer} instances.
+    * 
+    * @param testCase the test class object being enriched
+    * 
+    */
    public void enrich(Object testCase)
    {
       Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
@@ -79,6 +85,14 @@ public class InfinispanTestEnricher implements TestEnricher
       }
    }
 
+   /**
+    * 
+    * Enriches method parameters on a test class object with {@link RemoteInfinispanServer} instances.
+    * 
+    * @param method the method parameters of which should be enriched
+    * @return enriched parameters of the method
+    * 
+    */
    public Object[] resolve(Method method)
    {
       Object[] values = new Object[method.getParameterTypes().length];

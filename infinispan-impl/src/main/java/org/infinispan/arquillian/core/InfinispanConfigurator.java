@@ -33,8 +33,34 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.as.arquillian.container.CommonContainerConfiguration;
 
 /**
- * Creates {@link InfinispanContext} and stores {@link RemoteInfinispanServer} object
- * related to the particular container.
+ * A creator of {@link RemoteInfinispanServer} objects. Creates a single instance of 
+ * {@link InfinispanContext} and stores {@link RemoteInfinispanServer} objects 
+ * related to particular containers into the context.
+ * 
+ * {@link RemoteInfinispanServer} instances can point either to a standalone 
+ * Infinispan server or an JBoss Application Server with Infinispan embedded 
+ * (i.e. Enterprise Data Grid). Container's type resolution is based on presence
+ * of a <strong>protocol</strong> property which is mandatory for standalone 
+ * Infinispan server configuration (in arquillian.xml) and not used for JBoss AS 
+ * with Infinispan embedded.
+ * 
+ * Servers can be found in the context through container's name/identifier matching
+ * an attribute called <strong>qualifier</strong> on a container tag in Arquillian
+ * configuration file. 
+ * 
+ * <p>
+ * Observes:
+ * </p>
+ * <ul>
+ * <li>{@link SetupContainer}</li>
+ * </ul>
+ * 
+ * <p>
+ * Produces:
+ * </p>
+ * <ul>
+ * <li>{@link InfinispanContext}</li>
+ * </ul>
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -47,6 +73,11 @@ public class InfinispanConfigurator
    @SuiteScoped
    private InstanceProducer<InfinispanContext> infinispanContext;
 
+   /**
+    * Creates an {@link InfinispanContext} and stores a {@link RemoteInfinispanServer} in it. 
+    * 
+    * @param event an event being observed
+    */
    public void configureInfinispan(@Observes SetupContainer event)
    {
       ContainerDef def = event.getContainer().getContainerConfiguration();
