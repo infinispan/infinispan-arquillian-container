@@ -272,4 +272,22 @@ public class RemoteInfinispanCacheManager
    {
       return new RemoteInfinispanCache(provider, mBeans, "default", cacheManagerName);
    }
+   
+   /**
+    * 
+    * Returns a default cache for a Memcached server module under this cache manager. 
+    * HotRod and REST server modules use the same default cache named "default". 
+    * The default cache for Memcached is different since Infinispan 5.0.0.FINAL 
+    * and its name is "memcachedCache". Check out ISPN-1206.
+    * 
+    * This is just a convenience method. The same result can be accomplished by using 
+    *   
+    *   .getCache("memcachedCache")
+    * 
+    * @return the default Memcached cache under this cache manager
+    */
+   public RemoteInfinispanCache getDefaultMemcachedCache()
+   {
+       return new RemoteInfinispanCache(provider, mBeans, "memcachedCache", cacheManagerName);
+   }
 }
