@@ -33,8 +33,6 @@ import org.jboss.arquillian.container.spi.client.deployment.Validate;
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
- * TODO: retrieve and pass environment properties (-D<name>[=<value>])
- * 
  */
 public class InfinispanConfiguration implements ContainerConfiguration
 {
@@ -81,6 +79,8 @@ public class InfinispanConfiguration implements ContainerConfiguration
    private int shutdownTimeoutInSeconds = 20;
 
    private int jmxPort = 1090;
+   
+   private String systemProperties = "";
 
    public void validate() throws ConfigurationException
    {
@@ -317,4 +317,13 @@ public class InfinispanConfiguration implements ContainerConfiguration
       return jmxPort;
    }
 
+   public void setSystemProperties(String systemProperties)
+   {
+      this.systemProperties = systemProperties;
+   }
+
+   public String getSystemProperties()
+   {
+      return systemProperties;
+   }
 }

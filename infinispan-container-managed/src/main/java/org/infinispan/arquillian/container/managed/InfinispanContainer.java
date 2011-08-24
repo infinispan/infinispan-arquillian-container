@@ -135,6 +135,8 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
          {
             cmd.add(param);
          }
+         
+         splitAndAdd(cmd, configuration.getSystemProperties());
 
          log.info("Starting container with: " + cmd.toString());
          ProcessBuilder processBuilder = new ProcessBuilder(cmd);
