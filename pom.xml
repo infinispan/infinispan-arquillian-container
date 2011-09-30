@@ -16,11 +16,15 @@
     <!-- Properties -->
     <properties>
         <version.arquillian_core>1.0.0.Final-SNAPSHOT</version.arquillian_core>
+        <version.infinispan_core>5.1.0-SNAPSHOT</version.infinispan_core>
+        <version.infinispan_core_tests>5.1.0-SNAPSHOT</version.infinispan_core_tests>
         <version.junit>4.8.1</version.junit>
+        <version.testng>5.14.6</version.testng>
         <version.mockito>1.8.3</version.mockito>
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
         <version.jboss.as.arquillian>7.0.0.Final</version.jboss.as.arquillian>
+        <version.jbossjta>4.15.1.Final</version.jbossjta>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +41,19 @@
                 <artifactId>mockito-all</artifactId>
                 <version>${version.mockito}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>${version.infinispan_core}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>${version.infinispan_core_tests}</version>
+                <classifier>tests</classifier>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
