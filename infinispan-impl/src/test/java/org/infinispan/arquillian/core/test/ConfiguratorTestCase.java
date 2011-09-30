@@ -25,6 +25,7 @@ import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.infinispan.arquillian.core.InfinispanConfigurator;
 import org.infinispan.arquillian.core.InfinispanContext;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
+import org.infinispan.arquillian.core.RemoteInfinispanServer;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
@@ -56,7 +57,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldFindStandaloneInfinispanInfoInContext() throws Exception
+   public void shouldFindStandaloneInfinispanServerInContext() throws Exception
    {
       final String containerName = "container1";
       Container container = mock(Container.class);
@@ -73,11 +74,11 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
 
       fire(new SetupContainer(container));
       InfinispanContext ctx = getManager().getContext(SuiteContext.class).getObjectStore().get(InfinispanContext.class);
-      Assert.assertNotNull(ctx.get(containerName));
+      Assert.assertNotNull(ctx.get(RemoteInfinispanServer.class, containerName));
       String expectedMessage = "Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server";
       try
       {
-         ctx.get(containerName).getRESTEndpoint();
+         ((RemoteInfinispanServer) ctx.get(RemoteInfinispanServer.class, containerName)).getRESTEndpoint();
       }
       catch (Exception e)
       {
@@ -86,7 +87,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldFindEDGInfinispanInfoInContext() throws Exception
+   public void shouldFindEDGServerInContext() throws Exception
    {
       final String containerName = "container1";
       Container container = mock(Container.class);
@@ -104,7 +105,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
       fire(new SetupContainer(container));
       InfinispanContext ctx = getManager().getContext(SuiteContext.class).getObjectStore().get(InfinispanContext.class);
 
-      Assert.assertNotNull(ctx.get(containerName));
-      Assert.assertEquals("Expected context path configured", "/datagrid", ctx.get(containerName).getRESTEndpoint().getContextPath());
+      Assert.assertNotNull(ctx.get(RemoteInfinispanServer.class, containerName));
+      Assert.assertEquals("Expected context path configured", "/datagrid", ((RemoteInfinispanServer) ctx.get(RemoteInfinispanServer.class, containerName)).getRESTEndpoint().getContextPath());
    }
 }

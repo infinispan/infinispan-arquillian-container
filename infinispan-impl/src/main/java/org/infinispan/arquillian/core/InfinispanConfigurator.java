@@ -116,6 +116,6 @@ public class InfinispanConfigurator
          }
       }
       
-      infinispanContext.get().add(event.getContainer().getContainerConfiguration().getContainerName(), server);
+      infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
    }
 }

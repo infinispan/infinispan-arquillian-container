@@ -19,14 +19,16 @@ package org.infinispan.arquillian.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import org.jboss.arquillian.core.api.Instance;
+import org.infinispan.test.arquillian.DatagridManager;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 
 /**
- * InfinispanTestEnricher enriches tests with {@link RemoteInfinispanServer} objects, 
- * storing them either into fields or method parameters.
+ * InfinispanTestEnricher enriches tests with {@link RemoteInfinispanServer} or
+ * {@link DatagridManager} objects, storing them either into fields or method parameters.
  * 
  * @author <a href="mgencur@redhat.com>Martin Gencur</a>
  * 
@@ -34,41 +36,28 @@ import org.jboss.arquillian.test.spi.TestEnricher;
 public class InfinispanTestEnricher implements TestEnricher
 {
    @Inject
-   private Instance<InfinispanContext> infinispanContext;
+   @SuiteScoped
+   private InstanceProducer<InfinispanContext> infinispanContext;
 
    /**
-    * Enriches fields on a test class object with {@link RemoteInfinispanServer} instances.
+    * Enriches fields on a test class object with {@link RemoteInfinispanServer} and 
+    * {@link DatagridManager} instances.
     * 
     * @param testCase the test class object being enriched
     * 
     */
    public void enrich(Object testCase)
    {
-      Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
-
       Object value = null;
 
       for (Field field : SecurityActions.getFieldsWithAnnotation(testCase.getClass(), InfinispanResource.class))
       {
-         if ("default".equals(field.getAnnotation(InfinispanResource.class).value()))
-         {
-            if (infinispanContext.get().size() == 1)
-            {
-               value = infinispanContext.get().getOnlyServer();
-            }
-            else
-            {
-               throw new RuntimeException("Ambiguous injection point: " + field.getDeclaringClass().getName() + ":" + field.getName());
-            }
-         }
-         else
-         {
-            // lookup based on container's name (id)
-            value = infinispanContext.get().get(field.getAnnotation(InfinispanResource.class).value());
-         }
+         value = lookup(field.getType(), field.getAnnotation(InfinispanResource.class));
+         
          if (value == null)
          {
-            throw new IllegalArgumentException("Retrieved a null from context, which is not a valid RemoteInfinispanServer object");
+            throw new IllegalArgumentException("Cannot find specified object in InfinispanContext, type: " +
+               field.getType().getName() + ", qualifier: " + field.getAnnotation(InfinispanResource.class).value());
          }
          try
          {
@@ -84,10 +73,38 @@ public class InfinispanTestEnricher implements TestEnricher
          }
       }
    }
-
+   
+   private Object lookup(Class<?> type, InfinispanResource resource)
+   {
+      Object value = null;
+      
+      if (type.equals(DatagridManager.class))
+      {
+         if (infinispanContext.get() == null)
+         {
+            infinispanContext.set(new InfinispanContext());
+         }
+         value = infinispanContext.get().get(type);
+         if (value == null) 
+         {
+            value = new DatagridManager();
+            infinispanContext.get().add(type, value);
+         }
+      }
+      else
+      {
+         //infinispan context should be created and populated with data from arquillian.xml by now
+         Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
+         value = infinispanContext.get().get(type, resource.value());
+      }
+      return value;
+   }
+   
    /**
     * 
     * Enriches method parameters on a test class object with {@link RemoteInfinispanServer} instances.
+    * Method parameters cannot be of type {@link DatagridManager} since datagrid should be formed 
+    * before any test method. 
     * 
     * @param method the method parameters of which should be enriched
     * @return enriched parameters of the method
@@ -100,10 +117,10 @@ public class InfinispanTestEnricher implements TestEnricher
       for (int i = 0; i < parameterTypes.length; i++)
       {
          InfinispanResource container = getContainerAnnotation(method.getParameterAnnotations()[i]);
-         if (container != null)
+         if (container != null && method.getParameterTypes()[i].equals(RemoteInfinispanServer.class))
          {
-            // lookup based on container's name (id)
-            Object value = infinispanContext.get().get(container.value());
+            Object value = lookup(method.getParameterTypes()[i], container);
+            
             if (value == null)
             {
                throw new IllegalArgumentException("Retrieved a null from context, which is not a valid RemoteInfinispanServer object");

@@ -27,6 +27,7 @@ import org.infinispan.arquillian.core.InfinispanResource;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
 import org.infinispan.arquillian.core.RemoteInfinispanServer;
 import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
+import org.infinispan.test.arquillian.DatagridManager;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
@@ -73,9 +74,9 @@ public class EnricherTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldEnrichFieldsOnObject() throws Exception
+   public void shouldEnrichFieldWithInfServer() throws Exception
    {
-      final String containerName = "container1";
+      final String containerName = "default";
       final int portNumber = 1091;
       Container container = mock(Container.class);
       InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
@@ -90,7 +91,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       when(container.createDeployableConfiguration()).thenReturn(conf);
       fire(new SetupContainer(container));
       
-      EnrichedClass enrichedObject = new EnrichedClass();
+      ServerEnrichedClass enrichedObject = new ServerEnrichedClass();
       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
       getManager().inject(testEnricher);
       // enrich class via InfinispanTestEnricher
@@ -103,7 +104,7 @@ public class EnricherTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldEnrichParametersOnMethod() throws Exception
+   public void shouldEnrichParametersWithInfServer() throws Exception
    {
       final String containerName = "container2";
       final int portNumber = 1092;
@@ -120,10 +121,10 @@ public class EnricherTestCase extends AbstractTestTestBase
       when(container.createDeployableConfiguration()).thenReturn(conf);
       fire(new SetupContainer(container));
 
-      MethodEnrichedClass enrichedObject = new MethodEnrichedClass();
+      InfServerMethodEnrichedClass enrichedObject = new InfServerMethodEnrichedClass();
       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
       getManager().inject(testEnricher);
-      Method testMethod = MethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
+      Method testMethod = InfServerMethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
       // enrich method parameters via InfinispanTestEnricher
       Object[] parameters = testEnricher.resolve(testMethod);
       testMethod.invoke(enrichedObject, parameters);
@@ -132,14 +133,65 @@ public class EnricherTestCase extends AbstractTestTestBase
       // must correspond to container2 (portNumber=1092)
       Assert.assertEquals(portNumber, injectedPort.intValue());
    }
+   
+   @Test
+   public void shouldEnrichFieldWithDatagridManager()
+   {
+      DatagridManagerEnrichedClass enrichedObject = new DatagridManagerEnrichedClass();
+      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+      getManager().inject(testEnricher);
+      // enrich class via InfinispanTestEnricher
+      testEnricher.enrich(enrichedObject);
+      Assert.assertNotNull(enrichedObject.dm);
+      //regardless of the number of InfinispanResource annotations on a test class or their parameters there's only
+      //one datagrid manager and it is injected to all such fields
+      Assert.assertTrue((enrichedObject.dm == enrichedObject.dm2) &&  (enrichedObject.dm2 == enrichedObject.dm3));
+   }
+   
+   @Test
+   public void shouldNOTEnrichParametersWithDatagridManager() throws Exception
+   {
+      DatagridManagerMethodEnrichedClass enrichedObject = new DatagridManagerMethodEnrichedClass();
+      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+      getManager().inject(testEnricher);
+      Method testMethod = DatagridManagerMethodEnrichedClass.class.getMethod("testMethodEnrichment", DatagridManager.class);
+      // enrich method parameters via InfinispanTestEnricher
+      Object[] parameters = testEnricher.resolve(testMethod);
+      testMethod.invoke(enrichedObject, parameters);
+      //DatagridManager object should NOT be injected into method parameters
+      Assert.assertNull(enrichedObject.dm);
+   }
+   
+   static class DatagridManagerEnrichedClass 
+   {
+      @InfinispanResource
+      DatagridManager dm;
+      
+      @InfinispanResource
+      DatagridManager dm2;
+      
+      @InfinispanResource("xx")
+      DatagridManager dm3;
+   }
+   
+   static class DatagridManagerMethodEnrichedClass
+   {
+      DatagridManager dm;
+      
+      //this injection is not supposed to work
+      public void testMethodEnrichment(@InfinispanResource DatagridManager dmLoc)
+      {
+         dm = dmLoc;
+      }
+   }
 
-   static class EnrichedClass
+   static class ServerEnrichedClass
    {
       @InfinispanResource
       RemoteInfinispanServer server;
    }
 
-   static class MethodEnrichedClass
+   static class InfServerMethodEnrichedClass
    {
       RemoteInfinispanServer server;
       
