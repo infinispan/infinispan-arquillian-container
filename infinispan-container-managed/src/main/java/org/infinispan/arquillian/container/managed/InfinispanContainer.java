@@ -147,7 +147,7 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
          provider = new MBeanServerConnectionProvider(InetAddress.getByName(configuration.getHost()), configuration.getJmxPort());
          
          log.info("Waiting for server to start...");
-         waitForServerToStart(configuration.getStartupTimeoutInSeconds());
+         waitForServerToStart(configuration.getStartupTimeoutInSeconds(), configuration.getProtocol());
       }
       catch (Exception e)
       {
@@ -155,13 +155,24 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
       }
    }
 
-   private void waitForServerToStart(int startupTimeout) throws Exception
+   private void waitForServerToStart(int startupTimeout, String protocol) throws Exception
    {
       long timeout = startupTimeout * 1000;
       boolean serverAvailable = false;
       while (timeout > 0 && serverAvailable == false)
       {
-         serverAvailable = isServerStarted();
+         if ("hotrod".equals(protocol))
+         {
+            serverAvailable = isServerModuleStarted("HotRod");
+         } 
+         else if ("memcached".equals(protocol))
+         {
+            serverAvailable = isServerModuleStarted("Memcached");
+         } 
+         else if ("websocket".equals(protocol)) 
+         {
+            serverAvailable = isDefaultCacheManagerRunning();
+         }
          if (!serverAvailable)
          {
             Thread.sleep(WAIT_INTERVAL);
@@ -175,23 +186,28 @@ public class InfinispanContainer implements DeployableContainer<InfinispanConfig
       }
    }
 
-   private boolean isServerStarted()
+   private boolean isServerModuleStarted(String moduleName) 
    {
-      String pattern = "org.infinispan:*";
+       final String serverModule = "org.infinispan:type=Server,name=" + moduleName + ",component=Transport";
+       try 
+       {
+          Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(serverModule), null);
+          return mBeans.size() == 1 ? true : false;
+       } 
+       catch (Exception e) 
+       {
+          return false;
+       }
+   }
+   
+   private boolean isDefaultCacheManagerRunning()
+   {
+      final String defaultCacheManager = "org.infinispan:type=CacheManager,name=\"DefaultCacheManager\",component=CacheManager";
+      final String runningCacheCountAttr = "RunningCacheCount";
       try
       {
-         Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(pattern), null);
-         // wait for all mbeans for default cache and cache manager's mbean
-         if (mBeans.size() < 6)
-         {
-            return false;
-         }
-         else
-         {
-            // potentially, there can be more than 6 mbeans for Infinispan -> give them time to start
-            Thread.sleep(WAIT_INTERVAL);
-            return true;
-         }
+         int count = Integer.parseInt(provider.getConnection().getAttribute(new ObjectName(defaultCacheManager), runningCacheCountAttr).toString());
+         return count > 0 ? true : false;
       }
       catch (Exception e)
       {
