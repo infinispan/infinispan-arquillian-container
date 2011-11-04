@@ -16,3 +16,7 @@ pom files by changing version of the following artifact:
         <scope>test</scope>
         <version>${version.infinispan_core}</version>
     </dependency>
+
+The testng example contains certain test that fail at the moment (those taking a
+Method parameter. This is happening because of a bug in Arquillian which has been recently 
+fixed and will appear in the next release (version 1.0.0.CR6 or Final). 

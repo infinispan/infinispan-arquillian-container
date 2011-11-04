@@ -19,7 +19,8 @@
     <description>Example demonstrating starting and stopping JBossAS server instances with embedded Infinispan</description>
 
     <properties>
-        <hotrod.client.version>5.0.0.CR8</hotrod.client.version>
+        <hotrod.client.version>5.1.0.BETA2</hotrod.client.version>
+        <jboss.logging.version>3.1.0.Beta3</jboss.logging.version>
     </properties>
 
     <dependencies>
@@ -52,6 +53,18 @@
             <version>${hotrod.client.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-client-hotrod</artifactId>
+            <version>${hotrod.client.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${jboss.logging.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
     <build>
@@ -63,6 +76,12 @@
                 <configuration>
                     <forkMode>once</forkMode>
                     <skipTests>false</skipTests>
+                    <systemProperties>
+                        <property>
+                            <name>jboss.options</name>
+                            <value>-Djava.net.preferIPv4Stack=true</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
