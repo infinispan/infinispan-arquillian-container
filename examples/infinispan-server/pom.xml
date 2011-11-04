@@ -19,7 +19,7 @@
     <description>Example demonstrating starting and stopping Infinispan server instances</description>
 
     <properties>
-        <hotrod.client.version>5.0.0.CR8</hotrod.client.version>
+        <hotrod.client.version>5.1.0.BETA2</hotrod.client.version>
     </properties>
 
     <dependencies>
