@@ -56,7 +56,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldFindStandaloneInfinispanInfoInContext() throws Exception
+   public void shouldFindStandaloneInfinispanServerInContext() throws Exception
    {
       final String containerName = "container1";
       Container container = mock(Container.class);
@@ -86,7 +86,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldFindEDGInfinispanInfoInContext() throws Exception
+   public void shouldFindEDGServerInContext() throws Exception
    {
       final String containerName = "container1";
       Container container = mock(Container.class);
@@ -96,15 +96,14 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
       when(def.getContainerProperties()).thenReturn(properties);
       when(def.getContainerName()).thenReturn(containerName);
       when(container.getContainerConfiguration()).thenReturn(def);
-      when(conf.getJmxPort()).thenReturn(1091);
+      when(conf.getManagementPort()).thenReturn(9999);
       InetAddress addr = InetAddress.getByName("localhost");
-      when(conf.getBindAddress()).thenReturn(addr);
+      when(conf.getManagementAddress()).thenReturn(addr);
       when(container.createDeployableConfiguration()).thenReturn(conf);
 
       fire(new SetupContainer(container));
       InfinispanContext ctx = getManager().getContext(SuiteContext.class).getObjectStore().get(InfinispanContext.class);
 
       Assert.assertNotNull(ctx.get(containerName));
-      Assert.assertEquals("Expected context path configured", "/datagrid", ctx.get(containerName).getRESTEndpoint().getContextPath());
    }
 }
