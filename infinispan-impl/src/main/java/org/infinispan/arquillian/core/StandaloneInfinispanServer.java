@@ -22,7 +22,6 @@
 package org.infinispan.arquillian.core;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import org.infinispan.arquillian.model.HotRodEndpoint;
 import org.infinispan.arquillian.model.MemCachedEndpoint;
@@ -35,23 +34,14 @@ import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 /**
  * The implementation of {@link RemoteInfinispanServer}. An instance of this class can
  * be injected into a testcase and provide information about caches, cache managers and server
- * module endpoints (hotrod, memcached, REST).
+ * module endpoints (hotrod, memcached).
  * 
- * When using standalone Infinispan server, there's always only one of the following server modules 
+ * There's always only one of the following server modules 
  * available at any time:
  * 
  * <ul>
  *    <li>hotrod</li>
  *    <li>memcached</li>
- * </ul>
- * 
- * When using JBoss AS with Infinispan embedded, there are always all endpoints 
- * available simultaneously:
- * 
- * <ul>
- *    <li>hotrod</li>
- *    <li>memcached</li>
- *    <li>REST</li>
  * </ul>
  * 
  * @see RemoteInfinispanServer
@@ -60,29 +50,22 @@ import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class RemoteInfinispanServerImpl implements RemoteInfinispanServer
+public class StandaloneInfinispanServer implements RemoteInfinispanServer
 {
    private MBeanServerConnectionProvider provider;
 
    private MBeanObjectsProvider mBeans;
 
-   public RemoteInfinispanServerImpl(String host, int jmxPort, MBeanObjectsProvider mBeans)
+   public StandaloneInfinispanServer(InetAddress address, int jmxPort)
    {
-      this.provider = new MBeanServerConnectionProvider(getInetAddress(host), jmxPort);
-      this.mBeans = mBeans;
+      this.provider = new MBeanServerConnectionProvider(address, jmxPort);
+      this.mBeans = new MBeanObjectsProvider(Domain.STANDALONE);
    }
 
    @Override
    public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
-      if (mBeans.getDomain().equals(Domain.EDG))
-      {
-         return new RemoteInfinispanCacheManager(provider, mBeans, "default");
-      }
-      else
-      {
-         return new RemoteInfinispanCacheManager(provider, mBeans, "DefaultCacheManager");
-      }     
+      return new RemoteInfinispanCacheManager(provider, mBeans, "DefaultCacheManager");
    }
 
    @Override
@@ -106,25 +89,6 @@ public class RemoteInfinispanServerImpl implements RemoteInfinispanServer
    @Override
    public RESTEndpoint getRESTEndpoint()
    {
-      if (mBeans.getDomain().equals(Domain.EDG))
-      {
-         return new RESTEndpoint(provider, mBeans);
-      }
-      else
-      {
-         throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server");
-      }
-   }
-
-   protected static InetAddress getInetAddress(String name)
-   {
-      try
-      {
-         return InetAddress.getByName(name);
-      }
-      catch (UnknownHostException e)
-      {
-         throw new IllegalArgumentException("Unknown host: " + name);
-      }
+      throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server");
    }
 }
