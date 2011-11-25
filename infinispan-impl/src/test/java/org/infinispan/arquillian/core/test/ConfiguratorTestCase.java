@@ -97,15 +97,14 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
       when(def.getContainerProperties()).thenReturn(properties);
       when(def.getContainerName()).thenReturn(containerName);
       when(container.getContainerConfiguration()).thenReturn(def);
-      when(conf.getJmxPort()).thenReturn(1091);
+      when(conf.getManagementPort()).thenReturn(9999);
       InetAddress addr = InetAddress.getByName("localhost");
-      when(conf.getBindAddress()).thenReturn(addr);
+      when(conf.getManagementAddress()).thenReturn(addr);
       when(container.createDeployableConfiguration()).thenReturn(conf);
 
       fire(new SetupContainer(container));
       InfinispanContext ctx = getManager().getContext(SuiteContext.class).getObjectStore().get(InfinispanContext.class);
 
       Assert.assertNotNull(ctx.get(RemoteInfinispanServer.class, containerName));
-      Assert.assertEquals("Expected context path configured", "/datagrid", ((RemoteInfinispanServer) ctx.get(RemoteInfinispanServer.class, containerName)).getRESTEndpoint().getContextPath());
    }
 }

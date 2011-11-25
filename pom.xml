@@ -15,16 +15,17 @@
 
     <!-- Properties -->
     <properties>
-        <version.arquillian_core>1.0.0.CR5</version.arquillian_core>
-        <version.infinispan_core>5.1.0.BETA3</version.infinispan_core>
-        <version.infinispan_core_tests>5.1.0.BETA3</version.infinispan_core_tests>
+        <version.arquillian_core>1.0.0.Final-SNAPSHOT</version.arquillian_core>
+        <version.infinispan_core>5.1.0.BETA4</version.infinispan_core>
+        <version.infinispan_core_tests>5.1.0.BETA4</version.infinispan_core_tests>
         <version.junit>4.8.1</version.junit>
         <version.testng>5.14.6</version.testng>
         <version.mockito>1.8.3</version.mockito>
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
-        <version.jboss.as.arquillian>7.0.0.Final</version.jboss.as.arquillian>
         <version.jbossjta>4.15.1.Final</version.jbossjta>
+        <version.jboss.as.arquillian>7.1.0.Beta1</version.jboss.as.arquillian>
+        <version.jboss.as.controller.client>7.1.0.Beta1</version.jboss.as.controller.client>
     </properties>
 
     <dependencyManagement>
