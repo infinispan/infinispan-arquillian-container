@@ -238,6 +238,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-controller-client</artifactId>
+            <version>${version.jboss.as.controller.client}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

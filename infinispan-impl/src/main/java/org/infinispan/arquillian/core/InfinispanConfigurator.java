@@ -21,6 +21,11 @@
  */
 package org.infinispan.arquillian.core;
 
+import static org.jboss.as.arquillian.container.Authentication.getCallbackHandler;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
@@ -31,6 +36,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.as.arquillian.container.CommonContainerConfiguration;
+import org.jboss.as.arquillian.container.ManagementClient;
+import org.jboss.as.controller.client.ModelControllerClient;
 
 /**
  * A creator of {@link RemoteInfinispanServer} objects. Creates a single instance of 
@@ -95,7 +102,7 @@ public class InfinispanConfigurator
          try
          {
             conf = (InfinispanConfiguration) event.getContainer().createDeployableConfiguration();
-            server = new RemoteInfinispanServerImpl(conf.getHost(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.STANDALONE));
+            server = new StandaloneInfinispanServer(getInetAddress(conf.getHost()), conf.getJmxPort());
          }
          catch (Exception e)
          {
@@ -108,7 +115,7 @@ public class InfinispanConfigurator
          try
          {
             conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
-            server = new RemoteInfinispanServerImpl(conf.getBindAddress().getHostName(), conf.getJmxPort(), new MBeanObjectsProvider(Domain.EDG));
+            server = new EDGServer(conf.getManagementAddress(), conf.getManagementPort());
          }
          catch (Exception e)
          {
@@ -117,5 +124,17 @@ public class InfinispanConfigurator
       }
       
       infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
+   }
+   
+   protected static InetAddress getInetAddress(String name)
+   {
+      try
+      {
+         return InetAddress.getByName(name);
+      }
+      catch (UnknownHostException e)
+      {
+         throw new IllegalArgumentException("Unknown host: " + name);
+      }
    }
 }
