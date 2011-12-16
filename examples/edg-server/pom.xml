@@ -18,16 +18,10 @@
     <name>EDG (Enterprise Data Grid) Server Example</name>
     <description>Example demonstrating starting and stopping JBossAS server instances with embedded Infinispan</description>
 
-    <properties>
-        <hotrod.client.version>5.1.0.BETA2</hotrod.client.version>
-        <jboss.logging.version>3.1.0.Beta3</jboss.logging.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
@@ -50,19 +44,13 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
-            <version>${hotrod.client.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-client-hotrod</artifactId>
-            <version>${hotrod.client.version}</version>
+            <version>${version.infinispan_core}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>${jboss.logging.version}</version>
+            <version>${version.jboss-logging}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -15,17 +15,28 @@
 
     <!-- Properties -->
     <properties>
-        <version.arquillian_core>1.0.0.Final-SNAPSHOT</version.arquillian_core>
-        <version.infinispan_core>5.1.0.BETA4</version.infinispan_core>
-        <version.infinispan_core_tests>5.1.0.BETA4</version.infinispan_core_tests>
+        <version.arquillian_core>1.0.0.CR7</version.arquillian_core>
+        <version.infinispan_core>5.1.0.CR2</version.infinispan_core>
+        <version.infinispan_core_tests>5.1.0.CR2</version.infinispan_core_tests>
         <version.junit>4.8.1</version.junit>
         <version.testng>5.14.6</version.testng>
         <version.mockito>1.8.3</version.mockito>
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
         <version.jbossjta>4.15.1.Final</version.jbossjta>
-        <version.jboss.as.arquillian>7.1.0.Beta1</version.jboss.as.arquillian>
-        <version.jboss.as.controller.client>7.1.0.Beta1</version.jboss.as.controller.client>
+        <version.jboss.as.arquillian>7.1.0.CR1</version.jboss.as.arquillian>
+        <version.jboss.as.controller.client>7.1.0.CR1</version.jboss.as.controller.client>
+        <!-- infinispan-container-managed test dependencies versions -->
+        <version.netty>3.2.5.Final</version.netty>
+        <version.getopt>1.0.13</version.getopt>
+        <version.scala-library>2.9.1</version.scala-library>
+        <version.jgroups>3.0.1.Final</version.jgroups>
+        <version.jboss-transaction-api>1.0.1.GA</version.jboss-transaction-api>
+        <version.jboss-marshalling-river>1.3.0.GA</version.jboss-marshalling-river>
+        <version.jboss-marshalling>1.3.0.GA</version.jboss-marshalling>
+        <version.rhq-pluginAnnotations>3.0.4</version.rhq-pluginAnnotations>
+        <version.jboss-logging>3.1.0.CR1</version.jboss-logging>
+        <version.jandex>1.0.3.Final</version.jandex>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +66,12 @@
                 <version>${version.infinispan_core_tests}</version>
                 <classifier>tests</classifier>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

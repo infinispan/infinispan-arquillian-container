@@ -9,7 +9,9 @@
             </protocol>
             <configuration>
                 <property name="bindAddress">test1</property>
-                <property name="jbossHome">/path/to/enterprise/data/grid/1</property>
+                <property name="managementAddress">test1</property>
+                <property name="managementPort">9999</property>
+                <property name="jbossHome">/path/to/edg0</property>
             </configuration>
         </container>
         <container qualifier="container2">
@@ -18,7 +20,9 @@
             </protocol>
             <configuration>
                 <property name="bindAddress">test2</property>
-                <property name="jbossHome">/path/to/enterprise/data/grid/2</property>
+                <property name="managementAddress">test2</property>
+                <property name="managementPort">9999</property>
+                <property name="jbossHome">/path/to/edg1</property>
             </configuration>
         </container>
     </group>
