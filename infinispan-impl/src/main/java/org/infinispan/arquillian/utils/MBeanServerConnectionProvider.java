@@ -22,7 +22,6 @@ import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-
 import java.util.logging.Logger;
 
 /**
@@ -49,7 +48,7 @@ public final class MBeanServerConnectionProvider
    public MBeanServerConnection getConnection()
    {
       String host = hostAddr.getHostAddress();
-      String urlString = System.getProperty("jmx.service.url", "service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/jmxrmi");
+      String urlString = System.getProperty("jmx.service.url", "service:jmx:remoting-jmx://" + host + ":" + port);
       try
       {
          if (jmxConnector == null)

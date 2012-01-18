@@ -37,6 +37,9 @@
         <version.rhq-pluginAnnotations>3.0.4</version.rhq-pluginAnnotations>
         <version.jboss-logging>3.1.0.CR1</version.jboss-logging>
         <version.jandex>1.0.3.Final</version.jandex>
+        <version.remoting-jmx>1.0.0.Beta1</version.remoting-jmx>
+        <version.xnio-nio>3.0.0.GA</version.xnio-nio>
+        <version.jboss-sasl>1.0.0.Beta9</version.jboss-sasl>
     </properties>
 
     <dependencyManagement>
@@ -72,6 +75,21 @@
                 <artifactId>junit</artifactId>
                 <version>${version.junit}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.remoting3</groupId>
+                <artifactId>remoting-jmx</artifactId>
+                <version>${version.remoting-jmx}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.xnio</groupId>
+                <artifactId>xnio-nio</artifactId>
+                <version>${version.xnio-nio}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.sasl</groupId>
+                <artifactId>jboss-sasl</artifactId>
+                <version>${version.jboss-sasl}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
