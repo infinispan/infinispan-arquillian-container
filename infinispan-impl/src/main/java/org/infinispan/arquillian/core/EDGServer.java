@@ -61,59 +61,39 @@ public class EDGServer implements RemoteInfinispanServer
 
    private MBeanObjectsProvider mBeans;
 
-   private ManagementClient managementClient;
-   
    public EDGServer(InetAddress managementAddress, int managementPort)
    {
+      this.provider = new MBeanServerConnectionProvider(managementAddress, managementPort);
       this.mBeans = new MBeanObjectsProvider(Domain.EDG);
-      
-      ModelControllerClient modelControllerClient = ModelControllerClient.Factory.create(
-            managementAddress, 
-            managementPort, 
-            getCallbackHandler());
-      
-      this.managementClient = new ManagementClient(modelControllerClient, managementAddress.getHostAddress());
    }
 
    @Override
    public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
-      return new RemoteInfinispanCacheManager(getMBeanServerConnectionProvider(), mBeans, "default");
+      return new RemoteInfinispanCacheManager(provider, mBeans, "default");
    }
 
    @Override
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
    {  
-      return new RemoteInfinispanCacheManager(getMBeanServerConnectionProvider(), mBeans, cacheManagerName);
+      return new RemoteInfinispanCacheManager(provider, mBeans, cacheManagerName);
    }
 
    @Override
    public HotRodEndpoint getHotrodEndpoint()
    {
-      return new HotRodEndpoint(getMBeanServerConnectionProvider(), mBeans);
+      return new HotRodEndpoint(provider, mBeans);
    }
 
    @Override
    public MemCachedEndpoint getMemcachedEndpoint()
    {
-      return new MemCachedEndpoint(getMBeanServerConnectionProvider(), mBeans);
+      return new MemCachedEndpoint(provider, mBeans);
    }
 
    @Override
    public RESTEndpoint getRESTEndpoint()
    {
-      return new RESTEndpoint(getMBeanServerConnectionProvider(), mBeans);
-   }
-   
-   private MBeanServerConnectionProvider getMBeanServerConnectionProvider() 
-   {
-      if (provider == null) 
-      {
-         String jmxSubsystem = "jmx";
-         InetAddress host = InfinispanConfigurator.getInetAddress(managementClient.getSubSystemURI(jmxSubsystem).getHost());
-         int port = managementClient.getSubSystemURI(jmxSubsystem).getPort();
-         provider = new MBeanServerConnectionProvider(host, port);
-      }
-      return provider;
+      return new RESTEndpoint(provider, mBeans);
    }
 }
