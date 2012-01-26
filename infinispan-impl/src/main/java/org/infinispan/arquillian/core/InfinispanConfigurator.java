@@ -21,23 +21,17 @@
  */
 package org.infinispan.arquillian.core;
 
-import static org.jboss.as.arquillian.container.Authentication.getCallbackHandler;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
-import org.infinispan.arquillian.utils.MBeanObjectsProvider;
-import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
+import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.as.arquillian.container.CommonContainerConfiguration;
-import org.jboss.as.arquillian.container.ManagementClient;
-import org.jboss.as.controller.client.ModelControllerClient;
 
 /**
  * A creator of {@link RemoteInfinispanServer} objects. Creates a single instance of 
@@ -124,6 +118,20 @@ public class InfinispanConfigurator
       }
       
       infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
+   }
+   
+   /**
+    * Reconfigures server instances when needed. 
+    * 
+    * @param event an event being observed
+    */
+   public void reconfigureInfinispan(@Observes StartContainer event)
+   {
+      RemoteInfinispanServer server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+      if (server instanceof EDGServer) 
+      {
+         ((EDGServer) server).invalidateMBeanProvider();
+      }
    }
    
    protected static InetAddress getInetAddress(String name)

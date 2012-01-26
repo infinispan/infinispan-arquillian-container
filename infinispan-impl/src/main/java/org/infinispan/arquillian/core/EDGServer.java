@@ -21,11 +21,7 @@
  */
 package org.infinispan.arquillian.core;
 
-import static org.jboss.as.arquillian.container.Authentication.getCallbackHandler;
-
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.infinispan.arquillian.model.HotRodEndpoint;
 import org.infinispan.arquillian.model.MemCachedEndpoint;
 import org.infinispan.arquillian.model.RESTEndpoint;
@@ -33,8 +29,6 @@ import org.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
-import org.jboss.as.arquillian.container.ManagementClient;
-import org.jboss.as.controller.client.ModelControllerClient;
 
 /**
  * The implementation of {@link RemoteInfinispanServer}. An instance of this
@@ -60,40 +54,60 @@ public class EDGServer implements RemoteInfinispanServer
    private MBeanServerConnectionProvider provider;
 
    private MBeanObjectsProvider mBeans;
+   
+   private InetAddress managementAddress;
+   
+   private int managementPort;
 
    public EDGServer(InetAddress managementAddress, int managementPort)
    {
-      this.provider = new MBeanServerConnectionProvider(managementAddress, managementPort);
+      this.managementAddress = managementAddress;
+      this.managementPort = managementPort;
+      this.provider = getProvider();
       this.mBeans = new MBeanObjectsProvider(Domain.EDG);
+   }
+   
+   private MBeanServerConnectionProvider getProvider() 
+   {
+      if (provider == null)
+      {
+         provider = new MBeanServerConnectionProvider(managementAddress, managementPort); 
+      }
+      return provider;
    }
 
    @Override
    public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
-      return new RemoteInfinispanCacheManager(provider, mBeans, "default");
+      return new RemoteInfinispanCacheManager(getProvider(), mBeans, "default");
    }
 
    @Override
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
    {  
-      return new RemoteInfinispanCacheManager(provider, mBeans, cacheManagerName);
+      return new RemoteInfinispanCacheManager(getProvider(), mBeans, cacheManagerName);
    }
 
    @Override
    public HotRodEndpoint getHotrodEndpoint()
    {
-      return new HotRodEndpoint(provider, mBeans);
+      return new HotRodEndpoint(getProvider(), mBeans);
    }
 
    @Override
    public MemCachedEndpoint getMemcachedEndpoint()
    {
-      return new MemCachedEndpoint(provider, mBeans);
+      return new MemCachedEndpoint(getProvider(), mBeans);
    }
 
    @Override
    public RESTEndpoint getRESTEndpoint()
    {
-      return new RESTEndpoint(provider, mBeans);
+      return new RESTEndpoint(getProvider(), mBeans);
+   }
+   
+   public void invalidateMBeanProvider() 
+   {
+      this.provider = null;
    }
 }
