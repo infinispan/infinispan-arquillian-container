@@ -49,10 +49,8 @@ import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class EDGServer implements RemoteInfinispanServer
+public class EDGServer extends AbstractRemoteInfinispanServer
 {
-   private MBeanServerConnectionProvider provider;
-
    private MBeanObjectsProvider mBeans;
    
    private InetAddress managementAddress;
@@ -63,11 +61,12 @@ public class EDGServer implements RemoteInfinispanServer
    {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
-      this.provider = getProvider();
+      this.provider = createOrGetProvider();
       this.mBeans = new MBeanObjectsProvider(Domain.EDG);
    }
    
-   private MBeanServerConnectionProvider getProvider() 
+   @Override
+   protected MBeanServerConnectionProvider createOrGetProvider() 
    {
       if (provider == null)
       {
@@ -79,35 +78,30 @@ public class EDGServer implements RemoteInfinispanServer
    @Override
    public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
-      return new RemoteInfinispanCacheManager(getProvider(), mBeans, "default");
+      return new RemoteInfinispanCacheManager(createOrGetProvider(), mBeans, "default");
    }
 
    @Override
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
    {  
-      return new RemoteInfinispanCacheManager(getProvider(), mBeans, cacheManagerName);
+      return new RemoteInfinispanCacheManager(createOrGetProvider(), mBeans, cacheManagerName);
    }
 
    @Override
    public HotRodEndpoint getHotrodEndpoint()
    {
-      return new HotRodEndpoint(getProvider(), mBeans);
+      return new HotRodEndpoint(createOrGetProvider(), mBeans);
    }
 
    @Override
    public MemCachedEndpoint getMemcachedEndpoint()
    {
-      return new MemCachedEndpoint(getProvider(), mBeans);
+      return new MemCachedEndpoint(createOrGetProvider(), mBeans);
    }
 
    @Override
    public RESTEndpoint getRESTEndpoint()
    {
-      return new RESTEndpoint(getProvider(), mBeans);
-   }
-   
-   public void invalidateMBeanProvider() 
-   {
-      this.provider = null;
+      return new RESTEndpoint(createOrGetProvider(), mBeans);
    }
 }

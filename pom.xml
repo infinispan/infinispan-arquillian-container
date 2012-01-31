@@ -16,8 +16,8 @@
     <!-- Properties -->
     <properties>
         <version.arquillian_core>1.0.0.CR7</version.arquillian_core>
-        <version.infinispan_core>5.1.0.CR2</version.infinispan_core>
-        <version.infinispan_core_tests>5.1.0.CR2</version.infinispan_core_tests>
+        <version.infinispan_core>5.1.0.FINAL</version.infinispan_core>
+        <version.infinispan_core_tests>5.1.0.FINAL</version.infinispan_core_tests>
         <version.junit>4.8.1</version.junit>
         <version.testng>5.14.6</version.testng>
         <version.mockito>1.8.3</version.mockito>

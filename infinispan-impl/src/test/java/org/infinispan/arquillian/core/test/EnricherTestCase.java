@@ -97,7 +97,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       // enrich class via InfinispanTestEnricher
       testEnricher.enrich(enrichedObject);
       Assert.assertNotNull(enrichedObject.server);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.server, "provider");
+      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getSuperClassFieldValue(enrichedObject.server, "provider");
       Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
       // must correspond to container1 (portNumber=1091)
       Assert.assertEquals(portNumber, injectedPort.intValue());
@@ -128,7 +128,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       // enrich method parameters via InfinispanTestEnricher
       Object[] parameters = testEnricher.resolve(testMethod);
       testMethod.invoke(enrichedObject, parameters);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getFieldValue(enrichedObject.server, "provider");
+      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getSuperClassFieldValue(enrichedObject.server, "provider");
       Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
       // must correspond to container2 (portNumber=1092)
       Assert.assertEquals(portNumber, injectedPort.intValue());
@@ -224,4 +224,29 @@ public class EnricherTestCase extends AbstractTestTestBase
       }
       return null;
    }
+   
+   private Object getSuperClassFieldValue(Object object, String fieldName)
+   {
+      Field[] fields = object.getClass().getSuperclass().getDeclaredFields();
+      for (Field f : fields)
+      {
+         if (f.getName().equals(fieldName))
+         {
+            if (!f.isAccessible())
+            {
+               f.setAccessible(true);
+            }
+            try
+            {
+               return f.get(object);
+            }
+            catch (Exception e)
+            {
+               return null;
+            }
+         }
+      }
+      return null;
+   }
+   
 }
