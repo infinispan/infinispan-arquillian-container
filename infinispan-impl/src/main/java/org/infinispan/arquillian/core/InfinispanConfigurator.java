@@ -127,11 +127,8 @@ public class InfinispanConfigurator
     */
    public void reconfigureInfinispan(@Observes StartContainer event)
    {
-      RemoteInfinispanServer server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-      if (server instanceof EDGServer) 
-      {
-         ((EDGServer) server).invalidateMBeanProvider();
-      }
+      AbstractRemoteInfinispanServer server = (AbstractRemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+      server.invalidateMBeanProvider();
    }
    
    protected static InetAddress getInetAddress(String name)

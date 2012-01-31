@@ -34,21 +34,39 @@ public final class MBeanServerConnectionProvider
 {
 
    private static final Logger log = Logger.getLogger(MBeanServerConnectionProvider.class.getName());
-   private final InetAddress hostAddr;
-   private final int port;
+   private String jmxServiceUrl;
+   private InetAddress hostAddr;
+   private int port;
 
    private JMXConnector jmxConnector;
-
+   
    public MBeanServerConnectionProvider(InetAddress hostAddr, int port)
    {
+       setUpJmxServiceUrl(hostAddr, port, true);
+   }
+   
+   public MBeanServerConnectionProvider(InetAddress hostAddr, int port, boolean useRemotingJmx)
+   {
+       setUpJmxServiceUrl(hostAddr, port, useRemotingJmx);
+   }
+   
+   private void setUpJmxServiceUrl(InetAddress hostAddr, int port, boolean useRemotingJmx) 
+   {
       this.hostAddr = hostAddr;
-      this.port = port;
+      this.port = port; 
+      if (useRemotingJmx) 
+      {
+         this.jmxServiceUrl = getRemotingJmxUrl();
+      } 
+      else 
+      {
+         this.jmxServiceUrl = getRmiJmxUrl();
+      }
    }
 
    public MBeanServerConnection getConnection()
    {
-      String host = hostAddr.getHostAddress();
-      String urlString = System.getProperty("jmx.service.url", "service:jmx:remoting-jmx://" + host + ":" + port);
+      String urlString = System.getProperty("jmx.service.url", this.jmxServiceUrl);
       try
       {
          if (jmxConnector == null)
@@ -63,5 +81,15 @@ public final class MBeanServerConnectionProvider
       {
          throw new IllegalStateException("Cannot obtain MBeanServerConnection to: " + urlString, ex);
       }
+   }
+   
+   private String getRemotingJmxUrl() 
+   {
+      return "service:jmx:remoting-jmx://" + this.hostAddr.getHostAddress() + ":" + this.port;
+   }
+   
+   private String getRmiJmxUrl() 
+   {
+      return "service:jmx:rmi:///jndi/rmi://" + this.hostAddr.getHostAddress() + ":" + this.port + "/jmxrmi";
    }
 }

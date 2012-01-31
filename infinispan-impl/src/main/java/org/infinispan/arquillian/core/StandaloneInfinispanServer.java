@@ -50,40 +50,54 @@ import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class StandaloneInfinispanServer implements RemoteInfinispanServer
+public class StandaloneInfinispanServer extends AbstractRemoteInfinispanServer
 {
-   private MBeanServerConnectionProvider provider;
-
    private MBeanObjectsProvider mBeans;
+   
+   private InetAddress address;
+   
+   private int jmxPort;
 
    public StandaloneInfinispanServer(InetAddress address, int jmxPort)
    {
-      this.provider = new MBeanServerConnectionProvider(address, jmxPort);
+      this.address = address;
+      this.jmxPort = jmxPort;
+      this.provider = createOrGetProvider();
       this.mBeans = new MBeanObjectsProvider(Domain.STANDALONE);
+   }
+   
+   @Override
+   protected MBeanServerConnectionProvider createOrGetProvider() 
+   {
+      if (provider == null)
+      {
+         provider = new MBeanServerConnectionProvider(address, jmxPort, false); 
+      }
+      return provider;
    }
 
    @Override
    public RemoteInfinispanCacheManager getDefaultCacheManager()
    {
-      return new RemoteInfinispanCacheManager(provider, mBeans, "DefaultCacheManager");
+      return new RemoteInfinispanCacheManager(createOrGetProvider(), mBeans, "DefaultCacheManager");
    }
 
    @Override
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
    {
-      return new RemoteInfinispanCacheManager(provider, mBeans, cacheManagerName);
+      return new RemoteInfinispanCacheManager(createOrGetProvider(), mBeans, cacheManagerName);
    }
 
    @Override
    public HotRodEndpoint getHotrodEndpoint()
    {
-      return new HotRodEndpoint(provider, mBeans);
+      return new HotRodEndpoint(createOrGetProvider(), mBeans);
    }
 
    @Override
    public MemCachedEndpoint getMemcachedEndpoint()
    {
-      return new MemCachedEndpoint(provider, mBeans);
+      return new MemCachedEndpoint(createOrGetProvider(), mBeans);
    }
 
    @Override
