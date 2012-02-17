@@ -96,6 +96,21 @@ public class InfinispanConfigurator
          try
          {
             conf = (InfinispanConfiguration) event.getContainer().createDeployableConfiguration();
+            server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+            if (server != null)
+            {
+               if (server instanceof StandaloneInfinispanServer)
+               {
+                  StandaloneInfinispanServer orig = (StandaloneInfinispanServer) server;
+                  orig.setAddress(getInetAddress(conf.getHost()));
+                  orig.setJmxPort(conf.getJmxPort());
+                  return;
+               }
+               else
+               {
+                  throw new RuntimeException("Cannot override properties of a server of different type");
+               }
+            }
             server = new StandaloneInfinispanServer(getInetAddress(conf.getHost()), conf.getJmxPort());
          }
          catch (Exception e)
@@ -109,6 +124,21 @@ public class InfinispanConfigurator
          try
          {
             conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
+            server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+            if (server != null)
+            {
+               if (server instanceof EDGServer)
+               {
+                  EDGServer orig = (EDGServer) server;
+                  orig.setManagementAddress(conf.getManagementAddress());
+                  orig.setManagementPort(conf.getManagementPort());
+                  return;
+               }
+               else
+               {
+                  throw new RuntimeException("Cannot override properties of a server of different type");
+               }
+            }
             server = new EDGServer(conf.getManagementAddress(), conf.getManagementPort());
          }
          catch (Exception e)

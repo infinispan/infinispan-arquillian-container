@@ -104,4 +104,14 @@ public class EDGServer extends AbstractRemoteInfinispanServer
    {
       return new RESTEndpoint(createOrGetProvider(), mBeans);
    }
+   
+   void setManagementAddress(InetAddress managementAddress) 
+   {
+      this.managementAddress = managementAddress;
+   }
+
+   void setManagementPort(int managementPort) 
+   {
+      this.managementPort = managementPort;
+   }
 }

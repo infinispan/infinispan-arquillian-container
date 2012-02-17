@@ -105,4 +105,14 @@ public class StandaloneInfinispanServer extends AbstractRemoteInfinispanServer
    {
       throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server");
    }
+   
+   void setAddress(InetAddress address) 
+   {
+       this.address = address;
+   }
+
+   void setJmxPort(int jmxPort) 
+   {
+       this.jmxPort = jmxPort;
+   }
 }
