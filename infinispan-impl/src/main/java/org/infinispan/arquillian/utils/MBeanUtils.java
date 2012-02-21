@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
@@ -122,5 +123,59 @@ public class MBeanUtils
          }
       }
       return mBeanNames;
+   }
+   
+   /**
+    * 
+    * Returns names of MBeans according to the search pattern. Only MBean names matching the specified key-value pair
+    * are returned.
+    * 
+    * @param provider the MBean server connection provider
+    * @param pattern the string pattern
+    * @param the returned MBean names must contain this key
+    * @param the returned MBean names must contain this value for the previous parameter 
+    * @return the list of MBeans found under this pattern
+    * 
+    */
+   public static List<String> getMBeanNamesByKeyValuePattern(MBeanServerConnectionProvider provider, String pattern, String key, String value)
+   {
+      List<String> mBeanNames = null;
+      List<String> matchingMBeans = new ArrayList<String>();
+      final long timeout = System.currentTimeMillis() + TIMEOUT;
+      
+      while (matchingMBeans.size() == 0)
+      {
+         if (System.currentTimeMillis() >= timeout)
+         {
+            throw new IllegalArgumentException("Could not retrieve matching MBean objects based a pattern in " + TIMEOUT + " ms.");
+         }
+         mBeanNames = getMBeanNamesByPattern(provider, pattern);
+         for (String mBeanName : mBeanNames)
+         {
+            if (extractKey(key, mBeanName).contains(value))
+            {
+               matchingMBeans.add(mBeanName);
+            }
+         }
+         try
+         {
+            Thread.sleep(RETRY_TIME);
+         }
+         catch (InterruptedException ie)
+         {
+            // do nothing
+         }
+      }
+      return matchingMBeans;
+   }
+   
+   private static String extractKey(String key, String from)
+   {
+      /*
+       * e.g when I look for a key "name" in the following string: "jboss.infinispan:type=Cache,name="default(dist_sync)",
+       * manager="default", the result will be default(dist_sync)
+       */
+      Pattern namePattern = Pattern.compile(".*" + key + "=\"(.*?)\".*", Pattern.DOTALL);
+      return namePattern.matcher(from).replaceFirst("$1");
    }
 }
