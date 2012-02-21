@@ -25,6 +25,7 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
+import org.infinispan.arquillian.core.SecurityActions;
 
 /**
  * InfinispanTestEnricher enriches tests with {@link RemoteInfinispanServer} or

@@ -21,9 +21,7 @@
  */
 package org.infinispan.arquillian.utils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * MBean objects for accessing cache, cache manager, cache statistics MBeans and
@@ -92,22 +90,14 @@ public class MBeanObjectsProvider
    {
       // name of the cache is "*" here -> get all cache mbeans
       String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Cache";
-      List<String> mBeanNames = MBeanUtils.getMBeanNamesByPattern(provider, pattern);
-      List<String> foundCacheManagerMBeans = new ArrayList<String>();
-      for (String name : mBeanNames)
+      List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
+      if (mBeanNames.size() != 1)
       {
-         if (extractNameProperty(name).contains(cacheName))
-         {
-            foundCacheManagerMBeans.add(name);
-         }
-      }
-      if (foundCacheManagerMBeans.size() != 1)
-      {
-         throw new RuntimeException("Found caches named " + cacheName + ": " + foundCacheManagerMBeans.size());
+         throw new RuntimeException("More than one matching cache MBean found: " + mBeanNames.size());
       }
       else
       {
-         return foundCacheManagerMBeans.get(0);
+         return mBeanNames.get(0);
       }
    }
 
@@ -124,22 +114,14 @@ public class MBeanObjectsProvider
    {
       // name of the cache is "*" here -> get all cache statistics mbeans
       String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Statistics";
-      List<String> mBeanNames = MBeanUtils.getMBeanNamesByPattern(provider, pattern);
-      List<String> foundCacheStatisticsMBeans = new ArrayList<String>();
-      for (String name : mBeanNames)
+      List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
+      if (mBeanNames.size() != 1)
       {
-         if (extractNameProperty(name).contains(cacheName))
-         {
-            foundCacheStatisticsMBeans.add(name);
-         }
-      }
-      if (foundCacheStatisticsMBeans.size() != 1)
-      {
-         throw new RuntimeException("Found cache statistics: " + foundCacheStatisticsMBeans.size());
+         throw new RuntimeException("More than one matching cache statistics MBean found: " + mBeanNames.size());
       }
       else
       {
-         return foundCacheStatisticsMBeans.get(0);
+         return mBeanNames.get(0);
       }
    }
 
@@ -163,16 +145,6 @@ public class MBeanObjectsProvider
    public String getMemCachedServerMBean()
    {
       return memCachedServerMBean;
-   }
-
-   private String extractNameProperty(String from)
-   {
-      /*
-       * e.g when I pass: "jboss.infinispan:type=Cache,name="default(dist_sync)",
-       * manager="default", the result will be default(dist_sync)
-       */
-      Pattern namePattern = Pattern.compile(".*name=\"(.*?)\".*", Pattern.DOTALL);
-      return namePattern.matcher(from).replaceFirst("$1");
    }
 
    /**
