@@ -23,9 +23,6 @@ package org.infinispan.arquillian.core;
 
 import java.net.InetAddress;
 
-import org.infinispan.arquillian.model.HotRodEndpoint;
-import org.infinispan.arquillian.model.MemCachedEndpoint;
-import org.infinispan.arquillian.model.RESTEndpoint;
 import org.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;

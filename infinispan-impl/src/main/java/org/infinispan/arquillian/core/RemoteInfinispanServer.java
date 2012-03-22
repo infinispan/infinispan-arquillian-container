@@ -21,9 +21,6 @@
  */
 package org.infinispan.arquillian.core;
 
-import org.infinispan.arquillian.model.HotRodEndpoint;
-import org.infinispan.arquillian.model.MemCachedEndpoint;
-import org.infinispan.arquillian.model.RESTEndpoint;
 import org.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 
 /**

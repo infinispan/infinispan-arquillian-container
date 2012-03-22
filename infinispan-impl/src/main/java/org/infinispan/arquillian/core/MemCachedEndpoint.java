@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.infinispan.arquillian.model;
+package org.infinispan.arquillian.core;
 
 import java.net.InetAddress;
 
@@ -28,19 +28,19 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
 import org.infinispan.arquillian.utils.MBeanUtils;
 
 /**
- * Holds HotRod server module's Internet address and port number. Can be retrieved inside a test to
- * find out on which address/port the HotRod server module is running.
+ * Holds MemCached server module's Internet address and port number. Can be retrieved inside a test to
+ * find out on which address/port the MemCached server module is running.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class HotRodEndpoint
+public class MemCachedEndpoint
 {
    private MBeanServerConnectionProvider provider;
    
    private MBeanObjectsProvider mBeans;
 
-   public HotRodEndpoint(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
+   public MemCachedEndpoint(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
    {
       this.provider = provider;
       this.mBeans = mBeans;
@@ -48,40 +48,40 @@ public class HotRodEndpoint
 
    /**
     * 
-    * Retrieves an Internet address on which the HotRod server module is running.
+    * Retrieves an Internet address on which the MemCached server module is running.
     * 
-    * @return the Internet address on which the HotRod server module is running
+    * @return the Internet address on which the MemCached server module is running
     */
    public InetAddress getInetAddress()
    {
       String hostname;
       try
       {
-         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.HOST_NAME);
+         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getMemCachedServerMBean(), ServerModuleAttributes.HOST_NAME);
          return InetAddress.getByName(hostname);
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not retrieve HotRod host", e);
+         throw new RuntimeException("Could not retrieve MemCached host", e);
       }
    }
 
    /**
     * 
-    * Retrieves a port on which the HotRod server module is running.
+    * Retrieves a port on which the MemCached server module is running.
     * 
-    * @return the port on which the HotRod server module is running
+    * @return the port on which the MemCached server module is running
     */
    public int getPort()
    {
       String port;
       try
       {
-         port = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.PORT);
+         port = MBeanUtils.getMBeanAttribute(provider, mBeans.getMemCachedServerMBean(), ServerModuleAttributes.PORT);
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not retrieve HotRod port", e);
+         throw new RuntimeException("Could not retrieve MemCached port", e);
       }
       return Integer.parseInt(port);
    }
