@@ -98,8 +98,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
       when(def.getContainerName()).thenReturn(containerName);
       when(container.getContainerConfiguration()).thenReturn(def);
       when(conf.getManagementPort()).thenReturn(9999);
-      InetAddress addr = InetAddress.getByName("localhost");
-      when(conf.getManagementAddress()).thenReturn(addr);
+      when(conf.getManagementAddress()).thenReturn("localhost");
       when(container.createDeployableConfiguration()).thenReturn(conf);
 
       fire(new SetupContainer(container));

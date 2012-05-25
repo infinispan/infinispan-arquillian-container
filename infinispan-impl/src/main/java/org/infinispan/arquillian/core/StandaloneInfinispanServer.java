@@ -51,11 +51,11 @@ public class StandaloneInfinispanServer extends AbstractRemoteInfinispanServer
 {
    private MBeanObjectsProvider mBeans;
    
-   private InetAddress address;
+   private String address;
    
    private int jmxPort;
 
-   public StandaloneInfinispanServer(InetAddress address, int jmxPort)
+   public StandaloneInfinispanServer(String address, int jmxPort)
    {
       this.address = address;
       this.jmxPort = jmxPort;
@@ -103,7 +103,7 @@ public class StandaloneInfinispanServer extends AbstractRemoteInfinispanServer
       throw new RuntimeException("Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server");
    }
    
-   void setAddress(InetAddress address) 
+   void setAddress(String address) 
    {
        this.address = address;
    }

@@ -17,7 +17,6 @@
 package org.infinispan.arquillian.utils;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -35,22 +34,22 @@ public final class MBeanServerConnectionProvider
 
    private static final Logger log = Logger.getLogger(MBeanServerConnectionProvider.class.getName());
    private String jmxServiceUrl;
-   private InetAddress hostAddr;
+   private String hostAddr;
    private int port;
 
    private JMXConnector jmxConnector;
    
-   public MBeanServerConnectionProvider(InetAddress hostAddr, int port)
+   public MBeanServerConnectionProvider(String hostAddr, int port)
    {
        setUpJmxServiceUrl(hostAddr, port, true);
    }
    
-   public MBeanServerConnectionProvider(InetAddress hostAddr, int port, boolean useRemotingJmx)
+   public MBeanServerConnectionProvider(String hostAddr, int port, boolean useRemotingJmx)
    {
        setUpJmxServiceUrl(hostAddr, port, useRemotingJmx);
    }
    
-   private void setUpJmxServiceUrl(InetAddress hostAddr, int port, boolean useRemotingJmx) 
+   private void setUpJmxServiceUrl(String hostAddr, int port, boolean useRemotingJmx) 
    {
       this.hostAddr = hostAddr;
       this.port = port; 
@@ -85,11 +84,11 @@ public final class MBeanServerConnectionProvider
    
    private String getRemotingJmxUrl() 
    {
-      return "service:jmx:remoting-jmx://" + this.hostAddr.getHostAddress() + ":" + this.port;
+      return "service:jmx:remoting-jmx://" + this.hostAddr + ":" + this.port;
    }
    
    private String getRmiJmxUrl() 
    {
-      return "service:jmx:rmi:///jndi/rmi://" + this.hostAddr.getHostAddress() + ":" + this.port + "/jmxrmi";
+      return "service:jmx:rmi:///jndi/rmi://" + this.hostAddr + ":" + this.port + "/jmxrmi";
    }
 }

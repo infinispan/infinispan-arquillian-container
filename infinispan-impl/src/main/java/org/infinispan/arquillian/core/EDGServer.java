@@ -50,11 +50,11 @@ public class EDGServer extends AbstractRemoteInfinispanServer
 {
    private MBeanObjectsProvider mBeans;
    
-   private InetAddress managementAddress;
+   private String managementAddress;
    
    private int managementPort;
 
-   public EDGServer(InetAddress managementAddress, int managementPort)
+   public EDGServer(String managementAddress, int managementPort)
    {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
@@ -102,7 +102,7 @@ public class EDGServer extends AbstractRemoteInfinispanServer
       return new RESTEndpoint(createOrGetProvider(), mBeans);
    }
    
-   void setManagementAddress(InetAddress managementAddress) 
+   void setManagementAddress(String managementAddress) 
    {
       this.managementAddress = managementAddress;
    }

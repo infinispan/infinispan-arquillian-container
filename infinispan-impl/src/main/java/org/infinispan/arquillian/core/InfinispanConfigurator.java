@@ -102,7 +102,7 @@ public class InfinispanConfigurator
                if (server instanceof StandaloneInfinispanServer)
                {
                   StandaloneInfinispanServer orig = (StandaloneInfinispanServer) server;
-                  orig.setAddress(getInetAddress(conf.getHost()));
+                  orig.setAddress(conf.getHost());
                   orig.setJmxPort(conf.getJmxPort());
                   return;
                }
@@ -111,7 +111,7 @@ public class InfinispanConfigurator
                   throw new RuntimeException("Cannot override properties of a server of different type");
                }
             }
-            server = new StandaloneInfinispanServer(getInetAddress(conf.getHost()), conf.getJmxPort());
+            server = new StandaloneInfinispanServer(conf.getHost(), conf.getJmxPort());
          }
          catch (Exception e)
          {
@@ -159,17 +159,5 @@ public class InfinispanConfigurator
    {
       AbstractRemoteInfinispanServer server = (AbstractRemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
       server.invalidateMBeanProvider();
-   }
-   
-   protected static InetAddress getInetAddress(String name)
-   {
-      try
-      {
-         return InetAddress.getByName(name);
-      }
-      catch (UnknownHostException e)
-      {
-         throw new IllegalArgumentException("Unknown host: " + name);
-      }
    }
 }
