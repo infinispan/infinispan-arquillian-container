@@ -17,15 +17,17 @@
     <properties>
         <version.jboss.as.arquillian>7.1.1.Final</version.jboss.as.arquillian>
         <version.arquillian_core>1.0.0.Final</version.arquillian_core>
-        <version.infinispan_core>5.1.4.FINAL</version.infinispan_core>
+        <version.infinispan_core>5.1.5.FINAL</version.infinispan_core>
         <version.infinispan_core_tests>${version.infinispan_core}</version.infinispan_core_tests>
+        <version.hotrod.client>${version.infinispan_core}</version.hotrod.client>
         <version.jboss.as.controller.client>${version.jboss.as.arquillian}</version.jboss.as.controller.client>
         <version.junit>4.8.1</version.junit>
         <version.testng>5.14.6</version.testng>
         <version.mockito>1.8.3</version.mockito>
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
-        <version.jbossjta>4.15.1.Final</version.jbossjta>
+        <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
+        <version.jbossjta>4.16.4.Final</version.jbossjta>
         <!-- infinispan-container-managed test dependencies versions -->
         <version.netty>3.2.5.Final</version.netty>
         <version.getopt>1.0.13</version.getopt>

@@ -1,8 +1,5 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -11,18 +8,16 @@
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
  */
 package org.infinispan.arquillian.core;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
@@ -127,9 +122,9 @@ public class InfinispanConfigurator
             server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
             if (server != null)
             {
-               if (server instanceof EDGServer)
+               if (server instanceof JDGServer)
                {
-                  EDGServer orig = (EDGServer) server;
+                  JDGServer orig = (JDGServer) server;
                   orig.setManagementAddress(conf.getManagementAddress());
                   orig.setManagementPort(conf.getManagementPort());
                   return;
@@ -139,7 +134,7 @@ public class InfinispanConfigurator
                   throw new RuntimeException("Cannot override properties of a server of different type");
                }
             }
-            server = new EDGServer(conf.getManagementAddress(), conf.getManagementPort());
+            server = new JDGServer(conf.getManagementAddress(), conf.getManagementPort());
          }
          catch (Exception e)
          {

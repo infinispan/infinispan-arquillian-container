@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns="http://www.jboss.org/arquillian-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.jboss.org/arquillian-1.0 http://jboss.org/schema/arquillian/arquillian-1.0.xsd">
+
+    <group qualifier="Grid">
+        <container qualifier="container1">
+            <configuration>
+                <property name="jbossHome">/path/to/jboss-datagrid-server1</property>
+                <property name="managementPort">9999</property>
+                <property name="username">testuser</property>
+                <property name="password">testpassword</property>
+                <property name="serverConfig">standalone-ha.xml</property>
+                <property name="javaVmArguments">-Djava.net.preferIPv4Stack=true -Djboss.node.name=node0</property>
+            </configuration>
+        </container>
+        <container qualifier="container2">
+            <configuration>
+                <property name="jbossHome">/path/to/jboss-datagrid-server2</property>
+                <property name="managementPort">10099</property>
+                <property name="username">testuser</property>
+                <property name="password">testpassword</property>
+                <property name="serverConfig">standalone-ha.xml</property>
+                <property name="javaVmArguments">-Djava.net.preferIPv4Stack=true -Djboss.node.name=node1</property>
+            </configuration>
+        </container>
+    </group>
+
+</arquillian>
