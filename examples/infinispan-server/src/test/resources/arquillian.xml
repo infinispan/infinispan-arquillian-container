@@ -5,19 +5,20 @@
     <group qualifier="Grid">
         <container qualifier="container1">
             <configuration>
-                <property name="ispnHome">/path/to/infinispan1/dir</property>
-<!--            <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
+                <property name="ispnHome">/path/to/infinispan/server1</property>
+            <!-- <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
                 <property name="protocol">hotrod</property>
-                <property name="host">test1</property>
+                <property name="host">localhost</property>
             </configuration>
         </container>
         <container qualifier="container2">
             <configuration>
-                <property name="ispnHome">/path/to/infinispan2/dir</property>
-<!--            <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
+                <property name="ispnHome">/path/to/infinispan/server2</property>
                 <property name="protocol">hotrod</property>
-                <property name="host">test2</property>
-                <property name="jmxPort">1091</property>
+                <property name="host">localhost</property>
+                <!-- use port-offset for second server running on localhost -->
+                <property name="port">11322</property>
+                <property name="jmxPort">1190</property>
             </configuration>
         </container>
     </group>

@@ -18,10 +18,6 @@
     <name>Infinispan Server Example</name>
     <description>Example demonstrating starting and stopping Infinispan server instances</description>
 
-    <properties>
-        <hotrod.client.version>5.1.0.BETA2</hotrod.client.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -49,7 +45,7 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
-            <version>${hotrod.client.version}</version>
+            <version>${version.hotrod.client}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
