@@ -27,8 +27,7 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 /**
- * MBeanUtil class contains helper methods for accessing Infinispan data via
- * JMX.
+ * MBeanUtil class contains helper methods for accessing Infinispan data via JMX.
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
@@ -51,31 +50,14 @@ public class MBeanUtils
     */
    public static String getMBeanAttribute(MBeanServerConnectionProvider provider, String mbean, String attr)
    {
-      String result = null;
-      final long timeout = System.currentTimeMillis() + TIMEOUT;
-      while (result == null)
+      try
       {
-         try
-         {
-            result = provider.getConnection().getAttribute(new ObjectName(mbean), attr).toString();
-         }
-         catch (Exception e)
-         {
-            if (System.currentTimeMillis() >= timeout)
-            {
-               throw new IllegalArgumentException("Could not retrieve attribute " + attr + " on MBean " + mbean + " after " + TIMEOUT + " ms.", e);
-            }
-            try
-            {
-               Thread.sleep(RETRY_TIME);
-            }
-            catch (InterruptedException ie)
-            {
-               // do nothing
-            }
-         }
+         return provider.getConnection().getAttribute(new ObjectName(mbean), attr).toString();
       }
-      return result;
+      catch (Exception e)
+      {
+         throw new IllegalArgumentException("Could not retrieve attribute " + attr + " on MBean " + mbean, e);
+      }
    }
 
    /**
@@ -89,37 +71,21 @@ public class MBeanUtils
     */
    public static List<String> getMBeanNamesByPattern(MBeanServerConnectionProvider provider, String pattern)
    {
-      List<String> mBeanNames = null;
-      final long timeout = System.currentTimeMillis() + TIMEOUT;
-      while (mBeanNames == null)
+      try
       {
-         try
+         Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(pattern), null);
+         List<String> mBeanNames = new ArrayList<String>();
+         Iterator<ObjectInstance> iter = mBeans.iterator();
+         while (iter.hasNext())
          {
-            Set<ObjectInstance> mBeans = (Set<ObjectInstance>) provider.getConnection().queryMBeans(new ObjectName(pattern), null);
-            mBeanNames = new ArrayList<String>();
-            Iterator<ObjectInstance> iter = mBeans.iterator();
-            while (iter.hasNext())
-            {
-               mBeanNames.add(iter.next().getObjectName().toString());
-            }
+            mBeanNames.add(iter.next().getObjectName().toString());
          }
-         catch (Exception e)
-         {
-            if (System.currentTimeMillis() >= timeout)
-            {
-               throw new IllegalArgumentException("Could not retrieve MBean objects based on domain name after " + TIMEOUT + " ms.", e);
-            }
-            try
-            {
-               Thread.sleep(RETRY_TIME);
-            }
-            catch (InterruptedException ie)
-            {
-               // do nothing
-            }
-         }
+         return mBeanNames;
       }
-      return mBeanNames;
+      catch (Exception e)
+      {
+         throw new IllegalArgumentException("Could not retrieve MBean objects based on domain name", e);
+      }
    }
    
    /**
