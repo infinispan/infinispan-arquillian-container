@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
     <!-- Properties -->
     <properties>
-        <version.jboss.as.arquillian>7.1.1.Final</version.jboss.as.arquillian>
+        <version.jboss.as.arquillian>7.1.2.Final</version.jboss.as.arquillian>
         <version.arquillian_core>1.0.0.Final</version.arquillian_core>
         <version.infinispan_core>5.1.5.FINAL</version.infinispan_core>
         <version.infinispan_core_tests>${version.infinispan_core}</version.infinispan_core_tests>
