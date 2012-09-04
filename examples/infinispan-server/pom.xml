@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <parent>
         <groupId>org.infinispan.arquillian.container</groupId>
         <artifactId>infinispan-parent-arquillian</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0.Final-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>infinispan-server-example</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.Final-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Infinispan Server Example</name>
     <description>Example demonstrating starting and stopping Infinispan server instances</description>

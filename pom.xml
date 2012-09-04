@@ -17,13 +17,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301 USA
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.infinispan.arquillian.container</groupId>
     <artifactId>infinispan-parent-arquillian</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Infinispan Arquillian Container Parent</name>
     <description>Infinispan Container integrations for the Arquillian project</description>
@@ -47,6 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+	<url>https://github.com/infinispan/infinispan-arquillian-container</url>
 
     <scm>
         <connection>scm:git:git@github.com:infinispan/infinispan-arquillian-container.git</connection>
