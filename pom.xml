@@ -48,6 +48,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         </license>
     </licenses>
 
+	<url>https://github.com/infinispan/infinispan-arquillian-container</url>
+
     <scm>
         <connection>scm:git:git@github.com:infinispan/infinispan-arquillian-container.git</connection>
         <developerConnection>scm:git:git@github.com:infinispan/infinispan-arquillian-container.git</developerConnection>
