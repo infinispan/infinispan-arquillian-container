@@ -86,12 +86,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         </dependency>
         <!-- compile time dependencies -->
         <dependency>
-            <groupId>org.infinispan.arquillian.container</groupId>
-            <artifactId>infinispan-arquillian-container-managed</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-arquillian-common</artifactId>
             <version>${version.jboss.as.arquillian}</version>

@@ -23,29 +23,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <group qualifier="Grid">
         <container qualifier="container1">
             <configuration>
-                <property name="ispnHome">/path/to/infinispan/server1</property>
-            <!-- <property name="cacheConfig">/path/to/xml/cache/config/file/</property> -->
-                <property name="protocol">hotrod</property>
-                <property name="host">localhost</property>
+                <property name="jbossHome">/path/to/infinispan/server1</property>
+                <property name="managementPort">9999</property>
+                <property name="username">testuser</property>
+                <property name="password">testpassword</property>
+                <property name="serverConfig">clustered.xml</property>
+                <property name="javaVmArguments">-Djava.net.preferIPv4Stack=true -Djboss.node.name=node0</property>
             </configuration>
         </container>
         <container qualifier="container2">
             <configuration>
-                <property name="ispnHome">/path/to/infinispan/server2</property>
-                <property name="protocol">hotrod</property>
-                <property name="host">localhost</property>
-                <!-- use port-offset for second server running on localhost -->
-                <property name="port">11322</property>
-                <property name="jmxPort">1190</property>
+                <property name="jbossHome">/path/to/infinispan/server2</property>
+                <property name="managementPort">10099</property>
+                <property name="username">testuser</property>
+                <property name="password">testpassword</property>
+                <property name="serverConfig">clustered.xml</property>
+                <property name="javaVmArguments">-Djava.net.preferIPv4Stack=true -Djboss.node.name=node1 -Djboss.socket.binding.port-offset=100</property>
             </configuration>
         </container>
     </group>
 
-<!--
-    Other container properties: 
-    port, masterThreads, idleTimeout, tcpNoDelay, sendBufSize, recvBufSize, proxyHost, proxyPort, 
-    topoLockTimeout, topoReplTimeout, topoStateTransfer, cacheManagerClass, javaVmArguments, 
-    startupTimeoutInSeconds, shutdownTimeoutInSeconds, jmxPort 
--->
-    
 </arquillian>

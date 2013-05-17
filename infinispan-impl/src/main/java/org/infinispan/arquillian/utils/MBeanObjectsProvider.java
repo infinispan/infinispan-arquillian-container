@@ -32,24 +32,11 @@ public class MBeanObjectsProvider
    /**
     * Holds domain name for JMX
     */
-   public String domain;
+   public static final String DOMAIN = "jboss.infinispan";
 
    public String hotRodServerMBean;
 
    public String memCachedServerMBean;
-
-   /**
-    * 
-    * Creates a new MBeanObjectsProvider. 
-    * 
-    * @param domain specifies which JMX domain should be used, some predefined values can be found in {@link Domain}
-    */
-   public MBeanObjectsProvider(String domain)
-   {
-      this.domain = domain;
-      this.hotRodServerMBean = domain + ":type=Server,name=HotRod,component=Transport";
-      this.memCachedServerMBean = domain + ":type=Server,name=Memcached,component=Transport";
-   }
 
    /**
     * 
@@ -62,7 +49,7 @@ public class MBeanObjectsProvider
    public String getCacheManagerMBean(MBeanServerConnectionProvider provider, String cacheManagerName)
    {  
       //e.g. org.infinispan:type=CacheManager,name="default",component=CacheManager
-      String pattern = domain + ":" + "type=CacheManager,name=\"" + cacheManagerName + "\",component=CacheManager";
+      String pattern = DOMAIN + ":" + "type=CacheManager,name=\"" + cacheManagerName + "\",component=CacheManager";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByPattern(provider, pattern);
       if (mBeanNames.size() != 1)
       {
@@ -86,7 +73,7 @@ public class MBeanObjectsProvider
    public String getCacheMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache mbeans
-      String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Cache";
+      String pattern = DOMAIN + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Cache";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
       if (mBeanNames.size() != 1)
       {
@@ -110,7 +97,7 @@ public class MBeanObjectsProvider
    public String getCacheStatisticsMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache statistics mbeans
-      String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Statistics";
+      String pattern = DOMAIN + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Statistics";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
       if (mBeanNames.size() != 1)
       {
@@ -123,25 +110,43 @@ public class MBeanObjectsProvider
    }
 
    /**
-    * 
-    * Returns a HotRod server MBean.
-    * 
+    *
+    * Returns a HotRod server MBean with a default name.
+    *
     * @return the HotRod server MBean
     */
    public String getHorRodServerMBean()
    {
-      return hotRodServerMBean;
+      return getHorRodServerMBean("");
+   }
+
+   /**
+    * 
+    * Returns a HotRod server MBean.
+    *
+    * @param endpointName the name of the endpoint as specified in the server's configuration file
+    * @return the HotRod server MBean
+    */
+   public String getHorRodServerMBean(String endpointName)
+   {
+      return DOMAIN + ":type=Server,name=HotRod" + getEndpointSuffix(endpointName) + ",component=Transport";
    }
 
    /**
     * 
     * Returns a MemCached server MBean.
-    * 
+    *
+    * @param endpointName name of the endpoint as specified in the server's configuration file
     * @return the MemCached server MBean
     */
-   public String getMemCachedServerMBean()
+   public String getMemcachedServerMBean(String endpointName)
    {
-      return memCachedServerMBean;
+      return DOMAIN + ":type=Server,name=Memcached" + getEndpointSuffix(endpointName) + ",component=Transport";
+   }
+
+   private String getEndpointSuffix(String endpointName)
+   {
+      return endpointName.trim().isEmpty() ? "" : "-" + endpointName;
    }
 
    /**
@@ -152,31 +157,6 @@ public class MBeanObjectsProvider
     */
    public String getDomain()
    {
-      return domain;
-   }
-
-   /**
-    * 
-    * Sets a domain name for JMX.
-    * 
-    * @param domain the name of the domain
-    */
-   public void setDomain(String domain)
-   {
-      this.domain = domain;
-   }
-   
-   /**
-    * A helper class containing domain name constants for standalone Infinispan server and 
-    * Infinispan embedded in JBoss Application Server
-    *  
-    * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
-    * 
-    */
-   public class Domain
-   {
-      public static final String STANDALONE = "org.infinispan";
-
-      public static final String JDG = "jboss.infinispan";
+      return DOMAIN;
    }
 }

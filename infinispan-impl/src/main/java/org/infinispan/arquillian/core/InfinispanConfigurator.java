@@ -18,7 +18,6 @@
  */
 package org.infinispan.arquillian.core;
 
-import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.StartContainer;
@@ -33,12 +32,8 @@ import org.jboss.as.arquillian.container.CommonContainerConfiguration;
  * {@link InfinispanContext} and stores {@link RemoteInfinispanServer} objects 
  * related to particular containers into the context.
  * 
- * {@link RemoteInfinispanServer} instances can point either to a standalone 
- * Infinispan server or an JBoss Application Server with Infinispan embedded 
- * (i.e. Enterprise Data Grid). Container's type resolution is based on presence
- * of a <strong>protocol</strong> property which is mandatory for standalone 
- * Infinispan server configuration (in arquillian.xml) and not used for JBoss AS 
- * with Infinispan embedded.
+ * {@link RemoteInfinispanServer} instances point to a standalone
+ * Infinispan server.
  * 
  * Servers can be found in the context through container's name/identifier matching
  * an attribute called <strong>qualifier</strong> on a container tag in Arquillian
@@ -85,63 +80,36 @@ public class InfinispanConfigurator
 
       RemoteInfinispanServer server = null;
 
-      if (def.getContainerProperties().containsKey(STANDALONE_FLAG))
+
+      CommonContainerConfiguration conf;
+      try
       {
-         InfinispanConfiguration conf;
-         try
+         conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
+         server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+         if (server != null)
          {
-            conf = (InfinispanConfiguration) event.getContainer().createDeployableConfiguration();
-            server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-            if (server != null)
+            if (server instanceof InfinispanServer)
             {
-               if (server instanceof StandaloneInfinispanServer)
-               {
-                  StandaloneInfinispanServer orig = (StandaloneInfinispanServer) server;
-                  orig.setAddress(conf.getHost());
-                  orig.setJmxPort(conf.getJmxPort());
-                  return;
-               }
-               else
-               {
-                  throw new RuntimeException("Cannot override properties of a server of different type");
-               }
+               InfinispanServer orig = (InfinispanServer) server;
+               orig.setManagementAddress(conf.getManagementAddress());
+               orig.setManagementPort(conf.getManagementPort());
+               return;
             }
-            server = new StandaloneInfinispanServer(conf.getHost(), conf.getJmxPort());
+            else
+            {
+               throw new RuntimeException("Cannot override properties of a server of different type");
+            }
          }
-         catch (Exception e)
+         else
          {
-            throw new RuntimeException("Could not create deployable configuration", e);
+            server = new InfinispanServer(conf.getManagementAddress(), conf.getManagementPort());
          }
       }
-      else
+      catch (Exception e)
       {
-         CommonContainerConfiguration conf;
-         try
-         {
-            conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
-            server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-            if (server != null)
-            {
-               if (server instanceof JDGServer)
-               {
-                  JDGServer orig = (JDGServer) server;
-                  orig.setManagementAddress(conf.getManagementAddress());
-                  orig.setManagementPort(conf.getManagementPort());
-                  return;
-               }
-               else
-               {
-                  throw new RuntimeException("Cannot override properties of a server of different type");
-               }
-            }
-            server = new JDGServer(conf.getManagementAddress(), conf.getManagementPort());
-         }
-         catch (Exception e)
-         {
-            throw new RuntimeException("Could not create deployable configuration", e);
-         }
+         throw new RuntimeException("Could not create deployable configuration", e);
       }
-      
+
       infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
    }
    
