@@ -33,14 +33,22 @@ import org.infinispan.arquillian.utils.MBeanUtils;
  */
 public class HotRodEndpoint
 {
+   private String name;
+
    private MBeanServerConnectionProvider provider;
    
    private MBeanObjectsProvider mBeans;
 
    public HotRodEndpoint(MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
    {
+      this("", provider, mBeans);
+   }
+
+   public HotRodEndpoint(String name, MBeanServerConnectionProvider provider, MBeanObjectsProvider mBeans)
+   {
       this.provider = provider;
       this.mBeans = mBeans;
+      this.name = name;
    }
 
    /**
@@ -54,7 +62,7 @@ public class HotRodEndpoint
       String hostname;
       try
       {
-         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.HOST_NAME);
+         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(name), ServerModuleAttributes.HOST_NAME);
          return InetAddress.getByName(hostname);
       }
       catch (Exception e)
@@ -74,7 +82,7 @@ public class HotRodEndpoint
       String port;
       try
       {
-         port = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.PORT);
+         port = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(name), ServerModuleAttributes.PORT);
       }
       catch (Exception e)
       {

@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         </license>
     </licenses>
 
-	<url>https://github.com/infinispan/infinispan-arquillian-container</url>
+    <url>https://github.com/infinispan/infinispan-arquillian-container</url>
 
     <scm>
         <connection>scm:git:git@github.com:infinispan/infinispan-arquillian-container.git</connection>
@@ -96,9 +96,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
     <!-- Properties -->
     <properties>
-        <version.jboss.as.arquillian>7.1.2.Final</version.jboss.as.arquillian>
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
-        <version.infinispan_core>5.1.5.FINAL</version.infinispan_core>
+        <version.jboss.as.arquillian>7.2.0.Final</version.jboss.as.arquillian>
+        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
+        <version.infinispan_core>5.3.0.Beta1</version.infinispan_core>
         <version.infinispan_core_tests>${version.infinispan_core}</version.infinispan_core_tests>
         <version.hotrod.client>${version.infinispan_core}</version.hotrod.client>
         <version.jboss.as.controller.client>${version.jboss.as.arquillian}</version.jboss.as.controller.client>
@@ -109,17 +109,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.jbossjta>4.16.4.Final</version.jbossjta>
-        <!-- infinispan-container-managed test dependencies versions -->
-        <version.netty>3.2.5.Final</version.netty>
-        <version.getopt>1.0.13</version.getopt>
-        <version.scala-library>2.9.1</version.scala-library>
-        <version.jgroups>3.0.10.Final</version.jgroups>
-        <version.jboss-transaction-api>1.0.1.GA</version.jboss-transaction-api>
-        <version.jboss-marshalling-river>1.3.14.GA</version.jboss-marshalling-river>
-        <version.jboss-marshalling>1.3.14.GA</version.jboss-marshalling>
-        <version.rhq-pluginAnnotations>3.0.4</version.rhq-pluginAnnotations>
         <version.jboss-logging>3.1.1.GA</version.jboss-logging>
-        <version.jandex>1.0.3.Final</version.jandex>
         <version.remoting-jmx>1.0.0.Final</version.remoting-jmx>
         <version.xnio-nio>3.0.0.GA</version.xnio-nio>
         <version.jboss-sasl>1.0.0.Beta9</version.jboss-sasl>
@@ -178,7 +168,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     </dependencyManagement>
 
     <modules>
-        <module>infinispan-container-managed</module>
         <module>infinispan-impl</module>
     </modules>
 
@@ -196,7 +185,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
                     <optimize>true</optimize>
                     <compilerVersion>1.6</compilerVersion>
                     <fork>true</fork>
-                    <argLine>-Xmx512M</argLine>
                 </configuration>
             </plugin>
         </plugins>    

@@ -44,26 +44,14 @@ public final class MBeanServerConnectionProvider
    
    public MBeanServerConnectionProvider(String hostAddr, int port)
    {
-       setUpJmxServiceUrl(hostAddr, port, true);
+      setUpJmxServiceUrl(hostAddr, port);
    }
    
-   public MBeanServerConnectionProvider(String hostAddr, int port, boolean useRemotingJmx)
-   {
-       setUpJmxServiceUrl(hostAddr, port, useRemotingJmx);
-   }
-   
-   private void setUpJmxServiceUrl(String hostAddr, int port, boolean useRemotingJmx) 
+   private void setUpJmxServiceUrl(String hostAddr, int port)
    {
       this.hostAddr = hostAddr;
       this.port = port; 
-      if (useRemotingJmx) 
-      {
-         this.jmxServiceUrl = getRemotingJmxUrl();
-      } 
-      else 
-      {
-         this.jmxServiceUrl = getRmiJmxUrl();
-      }
+      this.jmxServiceUrl = getRemotingJmxUrl();
    }
 
    public MBeanServerConnection getConnection()
@@ -88,10 +76,5 @@ public final class MBeanServerConnectionProvider
    private String getRemotingJmxUrl() 
    {
       return "service:jmx:remoting-jmx://" + this.hostAddr + ":" + this.port;
-   }
-   
-   private String getRmiJmxUrl() 
-   {
-      return "service:jmx:rmi:///jndi/rmi://" + this.hostAddr + ":" + this.port + "/jmxrmi";
    }
 }

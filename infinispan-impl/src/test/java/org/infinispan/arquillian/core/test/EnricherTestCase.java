@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.infinispan.arquillian.core.InfinispanConfigurator;
 import org.infinispan.arquillian.core.InfinispanResource;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
@@ -75,67 +74,6 @@ public class EnricherTestCase extends AbstractTestTestBase
       Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
    }
 
-   @Test
-   public void shouldEnrichFieldWithInfServer() throws Exception
-   {
-      final String containerName = "default";
-      final int portNumber = 1091;
-      Container container = mock(Container.class);
-      InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
-      ContainerDef def = mock(ContainerDef.class);
-      Map<String, String> properties = new HashMap<String, String>();
-      properties.put("protocol", "hotrod");
-      when(def.getContainerProperties()).thenReturn(properties);
-      when(def.getContainerName()).thenReturn(containerName);
-      when(container.getContainerConfiguration()).thenReturn(def);
-      when(conf.getJmxPort()).thenReturn(portNumber);
-      when(conf.getHost()).thenReturn("localhost");
-      when(container.createDeployableConfiguration()).thenReturn(conf);
-      fire(new SetupContainer(container));
-      
-      ServerEnrichedClass enrichedObject = new ServerEnrichedClass();
-      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-      getManager().inject(testEnricher);
-      // enrich class via InfinispanTestEnricher
-      testEnricher.enrich(enrichedObject);
-      Assert.assertNotNull(enrichedObject.server);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getSuperClassFieldValue(enrichedObject.server, "provider");
-      Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
-      // must correspond to container1 (portNumber=1091)
-      Assert.assertEquals(portNumber, injectedPort.intValue());
-   }
-
-   @Test
-   public void shouldEnrichParametersWithInfServer() throws Exception
-   {
-      final String containerName = "container2";
-      final int portNumber = 1092;
-      Container container = mock(Container.class);
-      InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
-      ContainerDef def = mock(ContainerDef.class);
-      Map<String, String> properties = new HashMap<String, String>();
-      properties.put("protocol", "hotrod");
-      when(def.getContainerProperties()).thenReturn(properties);
-      when(def.getContainerName()).thenReturn(containerName);
-      when(container.getContainerConfiguration()).thenReturn(def);
-      when(conf.getJmxPort()).thenReturn(portNumber);
-      when(conf.getHost()).thenReturn("localhost");
-      when(container.createDeployableConfiguration()).thenReturn(conf);
-      fire(new SetupContainer(container));
-
-      InfServerMethodEnrichedClass enrichedObject = new InfServerMethodEnrichedClass();
-      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-      getManager().inject(testEnricher);
-      Method testMethod = InfServerMethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
-      // enrich method parameters via InfinispanTestEnricher
-      Object[] parameters = testEnricher.resolve(testMethod);
-      testMethod.invoke(enrichedObject, parameters);
-      MBeanServerConnectionProvider injectedProvider = (MBeanServerConnectionProvider) getSuperClassFieldValue(enrichedObject.server, "provider");
-      Integer injectedPort = (Integer) getFieldValue(injectedProvider, "port");
-      // must correspond to container2 (portNumber=1092)
-      Assert.assertEquals(portNumber, injectedPort.intValue());
-   }
-   
    @Test
    public void shouldEnrichFieldWithDatagridManager()
    {

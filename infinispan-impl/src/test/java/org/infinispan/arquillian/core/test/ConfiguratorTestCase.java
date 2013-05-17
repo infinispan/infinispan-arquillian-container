@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.infinispan.arquillian.container.managed.InfinispanConfiguration;
 import org.infinispan.arquillian.core.InfinispanConfigurator;
 import org.infinispan.arquillian.core.InfinispanContext;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
@@ -59,37 +58,7 @@ public class ConfiguratorTestCase extends AbstractTestTestBase
    }
 
    @Test
-   public void shouldFindStandaloneInfinispanServerInContext() throws Exception
-   {
-      final String containerName = "container1";
-      Container container = mock(Container.class);
-      InfinispanConfiguration conf = mock(InfinispanConfiguration.class);
-      ContainerDef def = mock(ContainerDef.class);
-      Map<String, String> properties = new HashMap<String, String>();
-      properties.put("protocol", "hotrod");
-      when(def.getContainerProperties()).thenReturn(properties);
-      when(def.getContainerName()).thenReturn(containerName);
-      when(container.getContainerConfiguration()).thenReturn(def);
-      when(conf.getJmxPort()).thenReturn(1091);
-      when(conf.getHost()).thenReturn("localhost");
-      when(container.createDeployableConfiguration()).thenReturn(conf);
-
-      fire(new SetupContainer(container));
-      InfinispanContext ctx = getManager().getContext(SuiteContext.class).getObjectStore().get(InfinispanContext.class);
-      Assert.assertNotNull(ctx.get(RemoteInfinispanServer.class, containerName));
-      String expectedMessage = "Could not retrieve REST endpoint -> not applicable for standalone Infinispan Server";
-      try
-      {
-         ((RemoteInfinispanServer) ctx.get(RemoteInfinispanServer.class, containerName)).getRESTEndpoint();
-      }
-      catch (Exception e)
-      {
-         Assert.assertEquals("Expected different exception message", expectedMessage, e.getMessage());
-      }
-   }
-
-   @Test
-   public void shouldFindEDGServerInContext() throws Exception
+   public void shouldFindInfinispanServerInContext() throws Exception
    {
       final String containerName = "container1";
       Container container = mock(Container.class);
