@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!-- Parent -->
     <parent>
         <groupId>org.infinispan.arquillian.container</groupId>
         <artifactId>infinispan-parent-arquillian</artifactId>
@@ -34,13 +33,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Infinispan Server Example</name>
-    <description>Example demonstrating starting and stopping Infinispan server instances</description>
+    <description>Example demonstrating starting and stopping Infinispan Server</description>
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
@@ -49,9 +47,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan.arquillian.container</groupId>
-            <artifactId>infinispan-arquillian-container-managed</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-container-managed</artifactId>
+            <version>${version.jboss.as.arquillian}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -63,7 +61,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
-            <version>${version.hotrod.client}</version>
+            <version>${version.infinispan_core}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${version.jboss-logging}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -77,19 +81,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
                 <configuration>
                     <forkMode>once</forkMode>
                     <skipTests>false</skipTests>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}</directory>
-                            <includes>
-                                <include>**/*.log</include>
-                            </includes>
-                        </fileset>
-                    </filesets>
+                    <systemProperties>
+                        <property>
+                            <name>jboss.options</name>
+                            <value>-Djava.net.preferIPv4Stack=true</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

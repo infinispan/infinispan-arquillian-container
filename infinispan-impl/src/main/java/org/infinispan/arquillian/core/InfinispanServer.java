@@ -21,20 +21,11 @@ package org.infinispan.arquillian.core;
 import org.infinispan.arquillian.model.RemoteInfinispanCacheManager;
 import org.infinispan.arquillian.utils.MBeanObjectsProvider;
 import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
-import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
 
 /**
  * The implementation of {@link RemoteInfinispanServer}. An instance of this
  * class can be injected into a testcase and provide information about caches,
  * cache managers and server module endpoints (hotrod, memcached, REST).
- * 
- * There are always all endpoints available simultaneously:
- * 
- * <ul>
- * <li>hotrod</li>
- * <li>memcached</li>
- * <li>REST</li>
- * </ul>
  * 
  * @see RemoteInfinispanServer
  * 
@@ -42,7 +33,7 @@ import org.infinispan.arquillian.utils.MBeanObjectsProvider.Domain;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * 
  */
-public class JDGServer extends AbstractRemoteInfinispanServer
+public class InfinispanServer extends AbstractRemoteInfinispanServer
 {
    private MBeanObjectsProvider mBeans;
    
@@ -50,12 +41,12 @@ public class JDGServer extends AbstractRemoteInfinispanServer
    
    private int managementPort;
 
-   public JDGServer(String managementAddress, int managementPort)
+   public InfinispanServer(String managementAddress, int managementPort)
    {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
       this.provider = createOrGetProvider();
-      this.mBeans = new MBeanObjectsProvider(Domain.JDG);
+      this.mBeans = new MBeanObjectsProvider();
    }
    
    @Override
@@ -87,9 +78,19 @@ public class JDGServer extends AbstractRemoteInfinispanServer
    }
 
    @Override
+   public HotRodEndpoint getHotrodEndpoint(String name) {
+      return new HotRodEndpoint(name, createOrGetProvider(), mBeans);
+   }
+
+   @Override
    public MemCachedEndpoint getMemcachedEndpoint()
    {
       return new MemCachedEndpoint(createOrGetProvider(), mBeans);
+   }
+
+   @Override
+   public MemCachedEndpoint getMemcachedEndpoint(String name) {
+      return new MemCachedEndpoint(name, createOrGetProvider(), mBeans);
    }
 
    @Override

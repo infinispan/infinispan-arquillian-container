@@ -57,6 +57,16 @@ public interface RemoteInfinispanServer
    public HotRodEndpoint getHotrodEndpoint();
 
    /**
+    * Returns an object containing information about a specifically named HotRod endpoint (e.g. hostname, port to which
+    * this endpoint is bound).
+    *
+    * @param the name of the HotRod endpoint as specified in the server's configuration file
+    * @return the HotRod endpoint
+    *
+    */
+   public HotRodEndpoint getHotrodEndpoint(String name);
+
+   /**
     * Returns an object containing information about MemCached endpoint (e.g. hostname, port to which
     * this endpoint is bound).
     * 
@@ -64,6 +74,16 @@ public interface RemoteInfinispanServer
     * 
     */
    public MemCachedEndpoint getMemcachedEndpoint();
+
+   /**
+    * Returns an object containing information about a specifically named MemCached endpoint (e.g. hostname, port to which
+    * this endpoint is bound).
+    *
+    * @param the name of the Memcached endpoint as specified in the server's configuration file
+    * @return the MemCached endpoint
+    *
+    */
+   public MemCachedEndpoint getMemcachedEndpoint(String name);
 
    /**
     * Returns an object containing information about REST endpoint (e.g. hostname, REST server context path to which
@@ -77,6 +97,5 @@ public interface RemoteInfinispanServer
     */
    public RESTEndpoint getRESTEndpoint();
 
-   // not supported - not desired
-   // public WebSocketEndpoint getWebSocketEndpoint();
+   //public WebSocketEndpoint getWebSocketEndpoint();
 }
