@@ -72,9 +72,15 @@ public final class MBeanServerConnectionProvider
          throw new IllegalStateException("Cannot obtain MBeanServerConnection to: " + urlString, ex);
       }
    }
-   
-   private String getRemotingJmxUrl() 
-   {
-      return "service:jmx:remoting-jmx://" + this.hostAddr + ":" + this.port;
+
+   private String getRemotingJmxUrl() {
+      if (InetAddressValidator.isValidInet6Address(this.hostAddr))
+      {
+         return "service:jmx:remoting-jmx://[" + this.hostAddr + "]:" + this.port;
+      }
+      else
+      {
+         return "service:jmx:remoting-jmx://" + this.hostAddr + ":" + this.port;
+      }
    }
 }
