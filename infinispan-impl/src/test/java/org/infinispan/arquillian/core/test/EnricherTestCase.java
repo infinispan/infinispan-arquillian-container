@@ -18,23 +18,25 @@
  */
 package org.infinispan.arquillian.core.test;
 
+import static org.mockito.Mockito.mock;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import org.infinispan.arquillian.core.InfinispanConfigurator;
+import org.infinispan.arquillian.core.InfinispanContext;
 import org.infinispan.arquillian.core.InfinispanResource;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
 import org.infinispan.arquillian.core.RemoteInfinispanServer;
-import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
+import org.infinispan.arquillian.core.RemoteInfinispanServers;
 import org.infinispan.test.arquillian.DatagridManager;
-import org.jboss.arquillian.config.descriptor.api.ContainerDef;
-import org.jboss.arquillian.container.spi.Container;
-import org.jboss.arquillian.container.spi.event.SetupContainer;
+import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,14 +45,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests InfinispanTestEnricher class. It should be able to inject proper
  * InfinispanInfo objects either into object's fields or method's parameters
  * 
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
+ * @author <a href="mailto:mlinhard@redhat.com">Michal Linhard</a>
  * 
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -87,7 +88,7 @@ public class EnricherTestCase extends AbstractTestTestBase
       //one datagrid manager and it is injected to all such fields
       Assert.assertTrue((enrichedObject.dm == enrichedObject.dm2) &&  (enrichedObject.dm2 == enrichedObject.dm3));
    }
-   
+
    @Test
    public void shouldNOTEnrichParametersWithDatagridManager() throws Exception
    {
@@ -101,7 +102,63 @@ public class EnricherTestCase extends AbstractTestTestBase
       //DatagridManager object should NOT be injected into method parameters
       Assert.assertNull(enrichedObject.dm);
    }
+
+   @Test
+   public void shouldEnrichRemoteInfinispanServer() throws Exception
+   {
+       RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
+       RemoteInfinispanServer server2 = mock(RemoteInfinispanServer.class);
+       RemoteInfinispanServer server3 = mock(RemoteInfinispanServer.class);
+       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+       getManager().inject(testEnricher);
+       InfinispanContext ctx = injectContext();
+       ctx.add(RemoteInfinispanServer.class, "server1", server1);
+       ctx.add(RemoteInfinispanServer.class, "server2", server2);
+       ctx.add(RemoteInfinispanServer.class, "server3", server3);
+       RemoteInfinispanServerEnrichedClass enriched = new RemoteInfinispanServerEnrichedClass();
+       testEnricher.enrich(enriched);
+       Assert.assertSame(server1, enriched.server1);
+       Assert.assertSame(server2, enriched.server2);
+       Assert.assertNull(enriched.server3);
+       Assert.assertNull(enriched.server4);
+   }
+
+   @Test
+   public void shouldEnrichRemoteInfinispanServerOnMethod() throws Exception
+   {
+       RemoteInfinispanServer container2 = mock(RemoteInfinispanServer.class);
+       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+       getManager().inject(testEnricher);
+       InfinispanContext ctx = injectContext();
+       ctx.add(RemoteInfinispanServer.class, "container2", container2);
+       InfServerMethodEnrichedClass enriched = new InfServerMethodEnrichedClass();
+       testEnricher.enrich(enriched);
+       Method testMethod = InfServerMethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
+       testMethod.invoke(enriched, testEnricher.resolve(testMethod));
+       Assert.assertSame(container2, enriched.server);
+   }
    
+   @Test
+   public void shouldEnrichRemoteInfinispanServers() throws Exception
+   {
+       RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
+       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+       getManager().inject(testEnricher);
+       InfinispanContext ctx = injectContext();
+       ctx.add(RemoteInfinispanServer.class, "server1", server1);
+       RemoteInfinispanServersEnrichedClass enriched = new RemoteInfinispanServersEnrichedClass();
+       testEnricher.enrich(enriched);
+       Assert.assertNotNull(enriched.servers);
+       Assert.assertSame(enriched.servers.getServer("server1"), server1);
+   }
+
+
+   static class ContextHolder {
+       @Inject
+       @SuiteScoped
+       InstanceProducer<InfinispanContext> infinispanContext;
+   }
+
    static class DatagridManagerEnrichedClass 
    {
       @InfinispanResource
@@ -139,6 +196,34 @@ public class EnricherTestCase extends AbstractTestTestBase
       {
          server = locServer;
       }
+   }
+
+   static class RemoteInfinispanServersEnrichedClass
+   {
+      @InfinispanResource
+      RemoteInfinispanServers servers;
+   }
+
+   static class RemoteInfinispanServerEnrichedClass
+   {
+       @InfinispanResource("server1")
+       RemoteInfinispanServer server1;
+
+       @InfinispanResource("server2")
+       RemoteInfinispanServer server2;
+
+       RemoteInfinispanServer server3;
+
+       RemoteInfinispanServer server4;
+   }
+
+   private InfinispanContext injectContext()
+   {
+       ContextHolder holder = new ContextHolder();
+       getManager().inject(holder);
+       InfinispanContext ctx = new InfinispanContext();
+       holder.infinispanContext.set(ctx);
+       return ctx;
    }
 
    private Object getFieldValue(Object object, String fieldName)

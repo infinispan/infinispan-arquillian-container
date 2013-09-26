@@ -21,6 +21,7 @@ package org.infinispan.arquillian;
 import org.infinispan.arquillian.core.DatagridDestructor;
 import org.infinispan.arquillian.core.InfinispanConfigurator;
 import org.infinispan.arquillian.core.InfinispanTestEnricher;
+import org.infinispan.arquillian.core.WithRunningServerObserver;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestEnricher;
 
@@ -38,5 +39,6 @@ public class InfinispanExtension implements LoadableExtension
 
       builder.observer(InfinispanConfigurator.class);
       builder.observer(DatagridDestructor.class);
+      builder.observer(WithRunningServerObserver.class);
    }
 }

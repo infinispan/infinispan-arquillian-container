@@ -94,6 +94,16 @@ public class InfinispanTestEnricher implements TestEnricher
             infinispanContext.get().add(type, value);
          }
       }
+      else if (type.equals(RemoteInfinispanServers.class))
+      {
+         Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
+         value = infinispanContext.get().get(type);
+         if (value == null)
+         {
+            value = new RemoteInfinispanServersImpl(infinispanContext.get());
+            infinispanContext.get().add(type, value);
+         }
+      }
       else
       {
          //infinispan context should be created and populated with data from arquillian.xml by now
