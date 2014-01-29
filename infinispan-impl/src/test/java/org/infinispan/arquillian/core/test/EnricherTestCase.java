@@ -18,18 +18,7 @@
  */
 package org.infinispan.arquillian.core.test;
 
-import static org.mockito.Mockito.mock;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.infinispan.arquillian.core.InfinispanConfigurator;
-import org.infinispan.arquillian.core.InfinispanContext;
-import org.infinispan.arquillian.core.InfinispanResource;
-import org.infinispan.arquillian.core.InfinispanTestEnricher;
-import org.infinispan.arquillian.core.RemoteInfinispanServer;
-import org.infinispan.arquillian.core.RemoteInfinispanServers;
+import org.infinispan.arquillian.core.*;
 import org.infinispan.test.arquillian.DatagridManager;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
@@ -46,232 +35,164 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+
 /**
  * Tests InfinispanTestEnricher class. It should be able to inject proper
  * InfinispanInfo objects either into object's fields or method's parameters
- * 
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  * @author <a href="mailto:mlinhard@redhat.com">Michal Linhard</a>
- * 
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EnricherTestCase extends AbstractTestTestBase
-{
-   @Mock
-   private ServiceLoader serviceLoader;
+public class EnricherTestCase extends AbstractTestTestBase {
+    @Mock
+    private ServiceLoader serviceLoader;
 
-   @Override
-   protected void addExtensions(List<Class<?>> extensions)
-   {
-      extensions.add(InfinispanConfigurator.class);
-      extensions.add(InfinispanTestEnricher.class);
-   }
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        extensions.add(InfinispanConfigurator.class);
+        extensions.add(InfinispanTestEnricher.class);
+    }
 
-   @Before
-   public void setMocks()
-   {
-      TestEnricher testEnricher = new InfinispanTestEnricher();
-      bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
-      Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
-   }
+    @Before
+    public void setMocks() {
+        TestEnricher testEnricher = new InfinispanTestEnricher();
+        bind(ApplicationScoped.class, ServiceLoader.class, serviceLoader);
+        Mockito.when(serviceLoader.onlyOne(TestEnricher.class)).thenReturn(testEnricher);
+    }
 
-   @Test
-   public void shouldEnrichFieldWithDatagridManager()
-   {
-      DatagridManagerEnrichedClass enrichedObject = new DatagridManagerEnrichedClass();
-      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-      getManager().inject(testEnricher);
-      // enrich class via InfinispanTestEnricher
-      testEnricher.enrich(enrichedObject);
-      Assert.assertNotNull(enrichedObject.dm);
-      //regardless of the number of InfinispanResource annotations on a test class or their parameters there's only
-      //one datagrid manager and it is injected to all such fields
-      Assert.assertTrue((enrichedObject.dm == enrichedObject.dm2) &&  (enrichedObject.dm2 == enrichedObject.dm3));
-   }
+    @Test
+    public void shouldEnrichFieldWithDatagridManager() {
+        DatagridManagerEnrichedClass enrichedObject = new DatagridManagerEnrichedClass();
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        // enrich class via InfinispanTestEnricher
+        testEnricher.enrich(enrichedObject);
+        Assert.assertNotNull(enrichedObject.dm);
+        //regardless of the number of InfinispanResource annotations on a test class or their parameters there's only
+        //one datagrid manager and it is injected to all such fields
+        Assert.assertTrue((enrichedObject.dm == enrichedObject.dm2) && (enrichedObject.dm2 == enrichedObject.dm3));
+    }
 
-   @Test
-   public void shouldNOTEnrichParametersWithDatagridManager() throws Exception
-   {
-      DatagridManagerMethodEnrichedClass enrichedObject = new DatagridManagerMethodEnrichedClass();
-      TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-      getManager().inject(testEnricher);
-      Method testMethod = DatagridManagerMethodEnrichedClass.class.getMethod("testMethodEnrichment", DatagridManager.class);
-      // enrich method parameters via InfinispanTestEnricher
-      Object[] parameters = testEnricher.resolve(testMethod);
-      testMethod.invoke(enrichedObject, parameters);
-      //DatagridManager object should NOT be injected into method parameters
-      Assert.assertNull(enrichedObject.dm);
-   }
+    @Test
+    public void shouldNOTEnrichParametersWithDatagridManager() throws Exception {
+        DatagridManagerMethodEnrichedClass enrichedObject = new DatagridManagerMethodEnrichedClass();
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        Method testMethod = DatagridManagerMethodEnrichedClass.class.getMethod("testMethodEnrichment", DatagridManager.class);
+        // enrich method parameters via InfinispanTestEnricher
+        Object[] parameters = testEnricher.resolve(testMethod);
+        testMethod.invoke(enrichedObject, parameters);
+        //DatagridManager object should NOT be injected into method parameters
+        Assert.assertNull(enrichedObject.dm);
+    }
 
-   @Test
-   public void shouldEnrichRemoteInfinispanServer() throws Exception
-   {
-       RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
-       RemoteInfinispanServer server2 = mock(RemoteInfinispanServer.class);
-       RemoteInfinispanServer server3 = mock(RemoteInfinispanServer.class);
-       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-       getManager().inject(testEnricher);
-       InfinispanContext ctx = injectContext();
-       ctx.add(RemoteInfinispanServer.class, "server1", server1);
-       ctx.add(RemoteInfinispanServer.class, "server2", server2);
-       ctx.add(RemoteInfinispanServer.class, "server3", server3);
-       RemoteInfinispanServerEnrichedClass enriched = new RemoteInfinispanServerEnrichedClass();
-       testEnricher.enrich(enriched);
-       Assert.assertSame(server1, enriched.server1);
-       Assert.assertSame(server2, enriched.server2);
-       Assert.assertNull(enriched.server3);
-       Assert.assertNull(enriched.server4);
-   }
+    @Test
+    public void shouldEnrichRemoteInfinispanServer() throws Exception {
+        RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
+        RemoteInfinispanServer server2 = mock(RemoteInfinispanServer.class);
+        RemoteInfinispanServer server3 = mock(RemoteInfinispanServer.class);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        InfinispanContext ctx = injectContext();
+        ctx.add(RemoteInfinispanServer.class, "server1", server1);
+        ctx.add(RemoteInfinispanServer.class, "server2", server2);
+        ctx.add(RemoteInfinispanServer.class, "server3", server3);
+        RemoteInfinispanServerEnrichedClass enriched = new RemoteInfinispanServerEnrichedClass();
+        testEnricher.enrich(enriched);
+        Assert.assertSame(server1, enriched.server1);
+        Assert.assertSame(server2, enriched.server2);
+        Assert.assertNull(enriched.server3);
+        Assert.assertNull(enriched.server4);
+    }
 
-   @Test
-   public void shouldEnrichRemoteInfinispanServerOnMethod() throws Exception
-   {
-       RemoteInfinispanServer container2 = mock(RemoteInfinispanServer.class);
-       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-       getManager().inject(testEnricher);
-       InfinispanContext ctx = injectContext();
-       ctx.add(RemoteInfinispanServer.class, "container2", container2);
-       InfServerMethodEnrichedClass enriched = new InfServerMethodEnrichedClass();
-       testEnricher.enrich(enriched);
-       Method testMethod = InfServerMethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
-       testMethod.invoke(enriched, testEnricher.resolve(testMethod));
-       Assert.assertSame(container2, enriched.server);
-   }
-   
-   @Test
-   public void shouldEnrichRemoteInfinispanServers() throws Exception
-   {
-       RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
-       TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
-       getManager().inject(testEnricher);
-       InfinispanContext ctx = injectContext();
-       ctx.add(RemoteInfinispanServer.class, "server1", server1);
-       RemoteInfinispanServersEnrichedClass enriched = new RemoteInfinispanServersEnrichedClass();
-       testEnricher.enrich(enriched);
-       Assert.assertNotNull(enriched.servers);
-       Assert.assertSame(enriched.servers.getServer("server1"), server1);
-   }
+    @Test
+    public void shouldEnrichRemoteInfinispanServerOnMethod() throws Exception {
+        RemoteInfinispanServer container2 = mock(RemoteInfinispanServer.class);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        InfinispanContext ctx = injectContext();
+        ctx.add(RemoteInfinispanServer.class, "container2", container2);
+        InfServerMethodEnrichedClass enriched = new InfServerMethodEnrichedClass();
+        testEnricher.enrich(enriched);
+        Method testMethod = InfServerMethodEnrichedClass.class.getMethod("testMethodEnrichment", RemoteInfinispanServer.class);
+        testMethod.invoke(enriched, testEnricher.resolve(testMethod));
+        Assert.assertSame(container2, enriched.server);
+    }
 
+    @Test
+    public void shouldEnrichRemoteInfinispanServers() throws Exception {
+        RemoteInfinispanServer server1 = mock(RemoteInfinispanServer.class);
+        TestEnricher testEnricher = serviceLoader.onlyOne(TestEnricher.class);
+        getManager().inject(testEnricher);
+        InfinispanContext ctx = injectContext();
+        ctx.add(RemoteInfinispanServer.class, "server1", server1);
+        RemoteInfinispanServersEnrichedClass enriched = new RemoteInfinispanServersEnrichedClass();
+        testEnricher.enrich(enriched);
+        Assert.assertNotNull(enriched.servers);
+        Assert.assertSame(enriched.servers.getServer("server1"), server1);
+    }
 
-   static class ContextHolder {
-       @Inject
-       @SuiteScoped
-       InstanceProducer<InfinispanContext> infinispanContext;
-   }
+    private InfinispanContext injectContext() {
+        ContextHolder holder = new ContextHolder();
+        getManager().inject(holder);
+        InfinispanContext ctx = new InfinispanContext();
+        holder.infinispanContext.set(ctx);
+        return ctx;
+    }
 
-   static class DatagridManagerEnrichedClass 
-   {
-      @InfinispanResource
-      DatagridManager dm;
-      
-      @InfinispanResource
-      DatagridManager dm2;
-      
-      @InfinispanResource("xx")
-      DatagridManager dm3;
-   }
-   
-   static class DatagridManagerMethodEnrichedClass
-   {
-      DatagridManager dm;
-      
-      //this injection is not supposed to work
-      public void testMethodEnrichment(@InfinispanResource DatagridManager dmLoc)
-      {
-         dm = dmLoc;
-      }
-   }
+    static class ContextHolder {
+        @Inject
+        @SuiteScoped
+        InstanceProducer<InfinispanContext> infinispanContext;
+    }
 
-   static class ServerEnrichedClass
-   {
-      @InfinispanResource
-      RemoteInfinispanServer server;
-   }
+    static class DatagridManagerEnrichedClass {
+        @InfinispanResource
+        DatagridManager dm;
 
-   static class InfServerMethodEnrichedClass
-   {
-      RemoteInfinispanServer server;
-      
-      public void testMethodEnrichment(@InfinispanResource("container2") RemoteInfinispanServer locServer)
-      {
-         server = locServer;
-      }
-   }
+        @InfinispanResource
+        DatagridManager dm2;
 
-   static class RemoteInfinispanServersEnrichedClass
-   {
-      @InfinispanResource
-      RemoteInfinispanServers servers;
-   }
+        @InfinispanResource("xx")
+        DatagridManager dm3;
+    }
 
-   static class RemoteInfinispanServerEnrichedClass
-   {
-       @InfinispanResource("server1")
-       RemoteInfinispanServer server1;
+    static class DatagridManagerMethodEnrichedClass {
+        DatagridManager dm;
 
-       @InfinispanResource("server2")
-       RemoteInfinispanServer server2;
+        //this injection is not supposed to work
+        public void testMethodEnrichment(@InfinispanResource DatagridManager dmLoc) {
+            dm = dmLoc;
+        }
+    }
 
-       RemoteInfinispanServer server3;
+    static class InfServerMethodEnrichedClass {
+        RemoteInfinispanServer server;
 
-       RemoteInfinispanServer server4;
-   }
+        public void testMethodEnrichment(@InfinispanResource("container2") RemoteInfinispanServer locServer) {
+            server = locServer;
+        }
+    }
 
-   private InfinispanContext injectContext()
-   {
-       ContextHolder holder = new ContextHolder();
-       getManager().inject(holder);
-       InfinispanContext ctx = new InfinispanContext();
-       holder.infinispanContext.set(ctx);
-       return ctx;
-   }
+    static class RemoteInfinispanServersEnrichedClass {
+        @InfinispanResource
+        RemoteInfinispanServers servers;
+    }
 
-   private Object getFieldValue(Object object, String fieldName)
-   {
-      Field[] fields = object.getClass().getDeclaredFields();
-      for (Field f : fields)
-      {
-         if (f.getName().equals(fieldName))
-         {
-            if (!f.isAccessible())
-            {
-               f.setAccessible(true);
-            }
-            try
-            {
-               return f.get(object);
-            }
-            catch (Exception e)
-            {
-               return null;
-            }
-         }
-      }
-      return null;
-   }
-   
-   private Object getSuperClassFieldValue(Object object, String fieldName)
-   {
-      Field[] fields = object.getClass().getSuperclass().getDeclaredFields();
-      for (Field f : fields)
-      {
-         if (f.getName().equals(fieldName))
-         {
-            if (!f.isAccessible())
-            {
-               f.setAccessible(true);
-            }
-            try
-            {
-               return f.get(object);
-            }
-            catch (Exception e)
-            {
-               return null;
-            }
-         }
-      }
-      return null;
-   }
-   
+    static class RemoteInfinispanServerEnrichedClass {
+        @InfinispanResource("server1")
+        RemoteInfinispanServer server1;
+
+        @InfinispanResource("server2")
+        RemoteInfinispanServer server2;
+
+        RemoteInfinispanServer server3;
+
+        RemoteInfinispanServer server4;
+    }
 }
