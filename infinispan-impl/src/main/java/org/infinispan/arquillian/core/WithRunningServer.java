@@ -9,18 +9,20 @@ import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 
 /**
- * Infinispan server will be started before and stopped after annotated method runs. Value is either
+ * Infinispan servers will be started before and stopped after annotated method runs. Value is either
  * one container name, or list of container names.
- * 
+ * <p/>
  * In case of class anotation, the server will be started on {@link BeforeClass} event and stopped
  * on {@link AfterClass} event.
- * 
+ *
  * @author <a href="mailto:mlinhard@redhat.com">Michal Linhard</a>
- * 
+ * @author <a href="mailto:vchepeli@redhat.com">Vitalii Chepeliuk</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface WithRunningServer {
-
-   public String[] value();
+    /**
+     * (Required) The servers which should be running
+     */
+    RunningServer[] value();
 }
