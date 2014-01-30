@@ -18,7 +18,7 @@
  */
 package org.infinispan.arquillian.core;
 
-import org.jboss.arquillian.config.descriptor.api.ContainerDef;
+import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -58,8 +58,6 @@ import org.jboss.as.arquillian.container.CommonContainerConfiguration;
  */
 public class InfinispanConfigurator
 {
-   private final String STANDALONE_FLAG = "protocol";  //protocol=hotrod|memcached|websocket
-
    @Inject
    @SuiteScoped
    private InstanceProducer<InfinispanContext> infinispanContext;
@@ -71,20 +69,24 @@ public class InfinispanConfigurator
     */
    public void configureInfinispan(@Observes SetupContainer event)
    {
-      ContainerDef def = event.getContainer().getContainerConfiguration();
-
       if (infinispanContext.get() == null)
       {
          infinispanContext.set(new InfinispanContext());
       }
 
       RemoteInfinispanServer server = null;
-
-
-      CommonContainerConfiguration conf;
+      
       try
       {
-         conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
+         ContainerConfiguration origConf = event.getContainer().createDeployableConfiguration();
+         CommonContainerConfiguration conf;
+         if(origConf instanceof CommonContainerConfiguration) {
+            conf = (CommonContainerConfiguration)origConf;
+         }
+         else { //not an AS7 fork config, fall back to default config 
+            conf = new CommonContainerConfiguration();
+         }
+         
          server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
          if (server != null)
          {
