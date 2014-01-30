@@ -182,12 +182,6 @@ public class EnricherTestCase extends AbstractTestTestBase
       }
    }
 
-   static class ServerEnrichedClass
-   {
-      @InfinispanResource
-      RemoteInfinispanServer server;
-   }
-
    static class InfServerMethodEnrichedClass
    {
       RemoteInfinispanServer server;
@@ -225,53 +219,4 @@ public class EnricherTestCase extends AbstractTestTestBase
        holder.infinispanContext.set(ctx);
        return ctx;
    }
-
-   private Object getFieldValue(Object object, String fieldName)
-   {
-      Field[] fields = object.getClass().getDeclaredFields();
-      for (Field f : fields)
-      {
-         if (f.getName().equals(fieldName))
-         {
-            if (!f.isAccessible())
-            {
-               f.setAccessible(true);
-            }
-            try
-            {
-               return f.get(object);
-            }
-            catch (Exception e)
-            {
-               return null;
-            }
-         }
-      }
-      return null;
-   }
-   
-   private Object getSuperClassFieldValue(Object object, String fieldName)
-   {
-      Field[] fields = object.getClass().getSuperclass().getDeclaredFields();
-      for (Field f : fields)
-      {
-         if (f.getName().equals(fieldName))
-         {
-            if (!f.isAccessible())
-            {
-               f.setAccessible(true);
-            }
-            try
-            {
-               return f.get(object);
-            }
-            catch (Exception e)
-            {
-               return null;
-            }
-         }
-      }
-      return null;
-   }
-   
 }
