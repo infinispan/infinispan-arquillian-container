@@ -18,15 +18,7 @@
  */
 package org.infinispan.arquillian.core.test;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
+import org.infinispan.arquillian.core.RunningServer;
 import org.infinispan.arquillian.core.WithRunningServer;
 import org.infinispan.arquillian.core.WithRunningServerObserver;
 import org.jboss.arquillian.container.test.api.ContainerController;
@@ -42,13 +34,24 @@ import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.test.AbstractTestTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  * Tests {@link WithRunningServerObserver}
- * 
+ *
  * @author <a href="mailto:mlinhard@redhat.com">Michal Linhard</a>
+ * @author <a href="mailto:vchepeli@redhat.com">Vitalii Chepeliuk</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class WithRunningServerTestCase extends AbstractTestTestBase {
@@ -61,31 +64,55 @@ public class WithRunningServerTestCase extends AbstractTestTestBase {
     @Test
     public void testRunsContainerAfter() throws Exception {
         ContainerController controller = mock(ContainerController.class);
+
         injectMockContainerController(controller);
         InOrder order = inOrder(controller);
         AnnotatedTestCase annotatedTestCase = new AnnotatedTestCase();
         Method testMethod1 = AnnotatedTestCase.class.getMethod("testMethod1");
         Method testMethod2 = AnnotatedTestCase.class.getMethod("testMethod2");
+        Method testMethod3 = AnnotatedTestCase.class.getMethod("testMethod3");
 
         verifyZeroInteractions(controller);
+
         fire(new BeforeClass(AnnotatedTestCase.class));
+
         fire(new Before(annotatedTestCase, testMethod1));
         fire(new After(annotatedTestCase, testMethod1));
+
         fire(new Before(annotatedTestCase, testMethod2));
         fire(new After(annotatedTestCase, testMethod2));
+
+        fire(new Before(annotatedTestCase, testMethod3));
+        fire(new After(annotatedTestCase, testMethod3));
+
         fire(new AfterClass(AnnotatedTestCase.class));
-        order.verify(controller).start("server1");
-        order.verify(controller).start("server2");
-        order.verify(controller).start("server3");
-        order.verify(controller).start("server4");
-        order.verify(controller).stop("server3");
-        order.verify(controller).stop("server4");
-        order.verify(controller).start("server4");
-        order.verify(controller).start("server5");
-        order.verify(controller).stop("server4");
-        order.verify(controller).stop("server5");
-        order.verify(controller).stop("server1");
-        order.verify(controller).stop("server2");
+
+        // check fire on before class
+        order.verify(controller).start(eq("server1"));
+        order.verify(controller).start(eq("server2"));
+        // check fire on method1 before
+        order.verify(controller).start(eq("server3"));
+        order.verify(controller).start(eq("server4"));
+        // check fire on method1 after
+        order.verify(controller).stop(eq("server3"));
+        order.verify(controller).stop(eq("server4"));
+        // check fire on method2 before
+        order.verify(controller).start(eq("server4"));
+        order.verify(controller).start(eq("server5"));
+        // check fire on method2 after
+        order.verify(controller).stop(eq("server4"));
+        order.verify(controller).stop(eq("server5"));
+        // check fire on method3 before
+        order.verify(controller).start(eq("server5"), argThat(new ConfigArgumentMatcher("config5")));
+        order.verify(controller).start(eq("server6"), argThat(new ConfigArgumentMatcher("config6")));
+        // check fire on method3 after
+        order.verify(controller).stop(eq("server5"));
+        order.verify(controller).stop(eq("server6"));
+        // check fire on class after class
+        order.verify(controller).stop(eq("server1"));
+        order.verify(controller).stop(eq("server2"));
+
+        // check NO other fire
         order.verify(controller, never()).stop(anyString());
         order.verify(controller, never()).start(anyString());
     }
@@ -105,18 +132,57 @@ public class WithRunningServerTestCase extends AbstractTestTestBase {
         private Instance<Injector> injector;
     }
 
-    @WithRunningServer({ "server1", "server2" })
+    @WithRunningServer(
+            servers = {
+                    @RunningServer(name = "server1"),
+                    @RunningServer(name = "server2")
+            }
+    )
     class AnnotatedTestCase {
 
-        @WithRunningServer({ "server3", "server4" })
+        @WithRunningServer(
+                servers = {
+                        @RunningServer(name = "server3"),
+                        @RunningServer(name = "server4")
+                }
+        )
         public void testMethod1() {
 
         }
 
-        @WithRunningServer({ "server4", "server5" })
+        @WithRunningServer(
+                servers = {
+                        @RunningServer(name = "server4"),
+                        @RunningServer(name = "server5")
+                }
+        )
         public void testMethod2() {
 
         }
 
+        @WithRunningServer(
+                servers = {
+                        @RunningServer(name = "server5", config = "config5"),
+                        @RunningServer(name = "server6", config = "config6")
+                }
+        )
+        public void testMethod3() {
+
+        }
+    }
+
+    private class ConfigArgumentMatcher extends ArgumentMatcher<Map<String, String>> {
+
+        String expected;
+
+        private ConfigArgumentMatcher(String config) {
+            this.expected = config;
+        }
+
+        @Override
+        public boolean matches(Object argument) {
+            Map<String, String> result = (Map<String, String>) argument;
+            return result.get(WithRunningServerObserver.SERVER_CONFIG_PROPERTY).equals(expected);
+        }
     }
 }
