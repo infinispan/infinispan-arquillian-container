@@ -42,6 +42,10 @@ public class DatagridDestructor
    @SuppressWarnings("unchecked")
    public void destroyInfinispanDatagrid(@Observes After event)
    {
+      if (infinispanContext.get() == null) {
+         return;
+      }
+      
       DatagridManager manager = (DatagridManager) infinispanContext.get().get(DatagridManager.class);
       if (manager != null)
       {
