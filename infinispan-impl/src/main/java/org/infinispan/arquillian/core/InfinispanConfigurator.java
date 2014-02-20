@@ -18,6 +18,8 @@
  */
 package org.infinispan.arquillian.core;
 
+import java.util.Map;
+
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.StartContainer;
@@ -59,6 +61,7 @@ import org.jboss.as.arquillian.container.CommonContainerConfiguration;
 public class InfinispanConfigurator
 {
    private final String STANDALONE_FLAG = "protocol";  //protocol=hotrod|memcached|websocket
+   private final String SKIP_ISPN_CONTEXT_FLAG = "skipIspnContext";  //if the flag is present, container creation and in injection to context is skipped
 
    @Inject
    @SuiteScoped
@@ -72,6 +75,10 @@ public class InfinispanConfigurator
    public void configureInfinispan(@Observes SetupContainer event)
    {
       ContainerDef def = event.getContainer().getContainerConfiguration();
+      Map<String, String> props = def.getContainerProperties();
+      if (props != null && props.containsKey(SKIP_ISPN_CONTEXT_FLAG)) {
+         return;
+      }
 
       if (infinispanContext.get() == null)
       {
@@ -120,7 +127,9 @@ public class InfinispanConfigurator
     */
    public void reconfigureInfinispan(@Observes StartContainer event)
    {
-      AbstractRemoteInfinispanServer server = (AbstractRemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-      server.invalidateMBeanProvider();
+      if (infinispanContext.get() != null) {
+         AbstractRemoteInfinispanServer server = (AbstractRemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
+         server.invalidateMBeanProvider();
+      }
    }
 }

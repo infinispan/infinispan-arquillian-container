@@ -43,6 +43,14 @@ Features supporting testing of the embedded mode include:
     - get a transaction manager and other objects belonging to any cache in the cluster 
       (objects like transaction, advanced cache, lock manager, replication listener, etc.)
 
+Usage of container not fully managed by Arquillian:
+
+Some containers, like e.g. EAP 5 container, are not fully managed by Arquillian and need to be stared/stopped manually.
+In such case dependency injection provided by this container cannot be used and you have to create appropriate resource 
+yourselves in the code. If the used Arquillian container is not compatible with one for JBoss AS 7, you also need to
+configure the container to skip adding it to  Infinispan-Arquillian context by setting `<property name="skipIspnContext"/>`
+in Arquillian configuration file.
+
 ##Building
 
    mvn clean install
