@@ -23,6 +23,8 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.util.logging.Logger;
 
+import static org.infinispan.arquillian.utils.InetAddressValidator.*;
+
 /**
  * A provider for the JSR160 connection.
  * 
@@ -74,13 +76,11 @@ public final class MBeanServerConnectionProvider
    }
 
    private String getRemotingJmxUrl() {
-      if (InetAddressValidator.isValidInet6Address(this.hostAddr))
-      {
-         return "service:jmx:remoting-jmx://[" + this.hostAddr + "]:" + this.port;
-      }
-      else
-      {
-         return "service:jmx:remoting-jmx://" + this.hostAddr + ":" + this.port;
-      }
+      // add brackets if NO brackets specified
+       if (!isValidInet6Address(hostAddr) || hostAddr.matches(IPV6_BRACKETS_REGEX)) {
+          return "service:jmx:remoting-jmx://" + hostAddr + ":" + port;
+       } else {
+          return "service:jmx:remoting-jmx://[" + hostAddr + "]:" + port;
+       }
    }
 }
