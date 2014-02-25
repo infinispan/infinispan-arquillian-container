@@ -15,7 +15,9 @@ import java.net.UnknownHostException;
 public class InetAddressValidator
 {
 
-   /**
+   public static final String IPV6_BRACKETS_REGEX = "\\A\\[(.*)\\]\\z";
+
+    /**
     * Validates an IPv4 address. Returns true if valid.
     *
     * @param inet4Address the IPv4 address to validate
