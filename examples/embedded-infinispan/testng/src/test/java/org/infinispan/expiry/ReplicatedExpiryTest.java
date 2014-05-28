@@ -19,9 +19,11 @@
 package org.infinispan.expiry;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import org.infinispan.Cache;
 import org.infinispan.arquillian.core.InfinispanResource;
-import org.infinispan.config.Configuration;
+import org.infinispan.configuration.cache.CacheMode;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.container.entries.InternalCacheEntry;
 import org.infinispan.container.entries.MortalCacheEntry;
 import org.infinispan.container.entries.TransientCacheEntry;
@@ -40,8 +42,9 @@ public class ReplicatedExpiryTest extends Arquillian
    @BeforeMethod
    public void setUp() throws Exception
    {
-      Configuration cfg = dm.getDefaultClusteredConfig(Configuration.CacheMode.REPL_SYNC);
-      dm.createClusteredCaches(2, "cache", cfg);
+      ConfigurationBuilder bld = new ConfigurationBuilder();
+      bld.clustering().cacheMode(CacheMode.REPL_SYNC);
+      dm.createClusteredCaches(2, "cache", bld);
    }
 
    @Test

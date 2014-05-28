@@ -24,7 +24,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ServiceNotFoundException;
 import org.infinispan.arquillian.core.InfinispanResource;
-import org.infinispan.config.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.test.arquillian.DatagridManager;
 import org.infinispan.test.fwk.TestCacheManagerFactory;
@@ -63,9 +63,9 @@ public class CacheManagerMBeanTest
       assert server.getAttribute(name, "RunningCacheCount").equals("1");
 
       // now define some new caches
-      dm.manager().defineConfiguration("a", new Configuration());
-      dm.manager().defineConfiguration("b", new Configuration());
-      dm.manager().defineConfiguration("c", new Configuration());
+      dm.manager().defineConfiguration("a", new ConfigurationBuilder().build());
+      dm.manager().defineConfiguration("b", new ConfigurationBuilder().build());
+      dm.manager().defineConfiguration("c", new ConfigurationBuilder().build());
       assert server.getAttribute(name, "CreatedCacheCount").equals("1");
       assert server.getAttribute(name, "DefinedCacheCount").equals("3");
       assert server.getAttribute(name, "RunningCacheCount").equals("1");

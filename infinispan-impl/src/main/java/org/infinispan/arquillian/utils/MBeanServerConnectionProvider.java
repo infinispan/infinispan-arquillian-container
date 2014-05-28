@@ -78,7 +78,7 @@ public final class MBeanServerConnectionProvider
    private String getRemotingJmxUrl() {
       // add brackets if NO brackets specified
        if (!isValidInet6Address(hostAddr) || hostAddr.matches(IPV6_BRACKETS_REGEX)) {
-          return "service:jmx:remoting-jmx://" + hostAddr + ":" + port;
+          return "service:jmx:http-remoting-jmx://" + hostAddr + ":" + port;
        } else {
           return "service:jmx:remoting-jmx://[" + hostAddr + "]:" + port;
        }

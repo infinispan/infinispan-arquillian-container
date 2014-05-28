@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <container qualifier="container1">
             <configuration>
                 <property name="jbossHome">/path/to/infinispan/server1</property>
-                <property name="managementPort">9999</property>
+                <property name="managementPort">9990</property>
                 <property name="username">testuser</property>
                 <property name="password">testpassword</property>
                 <property name="serverConfig">clustered.xml</property>
@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <container qualifier="container2">
             <configuration>
                 <property name="jbossHome">/path/to/infinispan/server2</property>
-                <property name="managementPort">10099</property>
+                <property name="managementPort">10090</property>
                 <property name="username">testuser</property>
                 <property name="password">testpassword</property>
                 <property name="serverConfig">clustered.xml</property>

@@ -18,19 +18,20 @@
  */
 package org.infinispan.server.test;
 
-import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.jboss.arquillian.junit.Arquillian;
 import org.infinispan.arquillian.core.InfinispanResource;
 import org.infinispan.arquillian.core.RemoteInfinispanServer;
 import org.infinispan.arquillian.model.CacheStatistics;
+import org.infinispan.client.hotrod.RemoteCache;
+import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * An example test that shows/uses information about Infinispan embedded in a
- * JBossAS 7+ (JBoss Data Grid). In relation to using standalone Infinispan
+ * WildFly 8. In relation to using standalone Infinispan
  * there is also a REST endpoint available and all server endpoints are available
  * simultaneously. Furthermore, names of default caches/cache managers are
  * different from those in standalone Infinispan.
@@ -53,7 +54,7 @@ public class ServerStatisticsTest
    @Test
    public void shouldBeAbleToSeeStatisticsChanging()
    {
-      RemoteCacheManager m = new RemoteCacheManager(server1.getHotrodEndpoint().getInetAddress().getHostName(), server1.getHotrodEndpoint().getPort());
+      RemoteCacheManager m = new RemoteCacheManager(new ConfigurationBuilder().addServer().host(server1.getHotrodEndpoint().getInetAddress().getHostName()).port(server1.getHotrodEndpoint().getPort()).build());
       RemoteCache<String, Integer> cache = m.getCache();
       Assert.assertTrue(server1.getCacheManager(DEFAULT_CM).getDefaultCache().getStores() == 0 &&
                         server2.getCacheManager(DEFAULT_CM).getDefaultCache().getStores() == 0);

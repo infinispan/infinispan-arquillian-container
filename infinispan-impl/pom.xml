@@ -84,11 +84,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- compile time dependencies -->
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-arquillian-common</artifactId>
-            <version>${version.jboss.as.arquillian}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-arquillian-common</artifactId>
+            <version>${version.wildfly}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -111,9 +110,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <version>${version.jbossjta}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-controller-client</artifactId>
-            <version>${version.jboss.as.controller.client}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-controller-client</artifactId>
+            <version>${version.wildfly}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

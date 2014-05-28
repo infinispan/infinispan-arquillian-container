@@ -47,9 +47,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-arquillian-container-managed</artifactId>
-            <version>${version.jboss.as.arquillian}</version>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>${version.wildfly}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
