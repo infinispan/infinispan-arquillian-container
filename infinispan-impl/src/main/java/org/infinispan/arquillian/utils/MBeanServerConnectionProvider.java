@@ -17,17 +17,19 @@
 package org.infinispan.arquillian.utils;
 
 import java.io.IOException;
+import java.util.logging.Logger;
+
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import java.util.logging.Logger;
 
-import static org.infinispan.arquillian.utils.InetAddressValidator.*;
+import static org.infinispan.arquillian.utils.InetAddressValidator.IPV6_BRACKETS_REGEX;
+import static org.infinispan.arquillian.utils.InetAddressValidator.isValidInet6Address;
 
 /**
  * A provider for the JSR160 connection.
- * 
+ *
  * @author Thomas.Diesler@jboss.com
  * @author Martin Gencur
  * @since 03-Dec-2010
@@ -43,16 +45,16 @@ public final class MBeanServerConnectionProvider
    private int port;
 
    private JMXConnector jmxConnector;
-   
+
    public MBeanServerConnectionProvider(String hostAddr, int port)
    {
       setUpJmxServiceUrl(hostAddr, port);
    }
-   
+
    private void setUpJmxServiceUrl(String hostAddr, int port)
    {
       this.hostAddr = hostAddr;
-      this.port = port; 
+      this.port = port;
       this.jmxServiceUrl = getRemotingJmxUrl();
    }
 
@@ -75,12 +77,26 @@ public final class MBeanServerConnectionProvider
       }
    }
 
-   private String getRemotingJmxUrl() {
-      // add brackets if NO brackets specified
-       if (!isValidInet6Address(hostAddr) || hostAddr.matches(IPV6_BRACKETS_REGEX)) {
-          return "service:jmx:http-remoting-jmx://" + hostAddr + ":" + port;
-       } else {
-          return "service:jmx:remoting-jmx://[" + hostAddr + "]:" + port;
-       }
+   private String getRemotingJmxUrl()
+   {
+      String useHostAddr = hostAddr;
+      if (isValidInet6Address(hostAddr) && !hostAddr.matches(IPV6_BRACKETS_REGEX))
+      {
+         // add brackets if NO brackets specified
+         useHostAddr = "[" + hostAddr + "]";
+      }
+
+      if (String.valueOf(port).endsWith("9"))
+      {
+         // old jboss-as management port: remoting-jmx
+         log.info("Management port " + port + " ends with \"9\" -- " +
+                 "remoting-jmx protocol for JBoss AS is used instead of http-remoting-jmx for Wildfly.");
+         return "service:jmx:remoting-jmx://" + useHostAddr + ":" + port;
+      }
+      else
+      {
+         // wildfly: http-remoting-jmx
+         return "service:jmx:http-remoting-jmx://" + useHostAddr + ":" + port;
+      }
    }
 }
