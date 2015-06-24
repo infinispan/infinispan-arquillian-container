@@ -26,35 +26,35 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
  * The implementation of {@link RemoteInfinispanServer}. An instance of this
  * class can be injected into a testcase and provide information about caches,
  * cache managers and server module endpoints (hotrod, memcached, REST).
- * 
+ *
  * @see RemoteInfinispanServer
- * 
- * 
+ *
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * 
+ *
  */
 public class InfinispanServer extends AbstractRemoteInfinispanServer
 {
    private MBeanObjectsProvider mBeans;
-   
+
    private String managementAddress;
-   
+
    private int managementPort;
 
-   public InfinispanServer(String managementAddress, int managementPort)
+   public InfinispanServer(String managementAddress, int managementPort, String jmxDomain)
    {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
       this.provider = createOrGetProvider();
-      this.mBeans = new MBeanObjectsProvider();
+      this.mBeans = new MBeanObjectsProvider(jmxDomain);
    }
-   
+
    @Override
-   protected MBeanServerConnectionProvider createOrGetProvider() 
+   protected MBeanServerConnectionProvider createOrGetProvider()
    {
       if (provider == null)
       {
-         provider = new MBeanServerConnectionProvider(managementAddress, managementPort); 
+         provider = new MBeanServerConnectionProvider(managementAddress, managementPort);
       }
       return provider;
    }
@@ -67,7 +67,7 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
 
    @Override
    public RemoteInfinispanCacheManager getCacheManager(String cacheManagerName)
-   {  
+   {
       return new RemoteInfinispanCacheManager(createOrGetProvider(), mBeans, cacheManagerName);
    }
 
@@ -98,13 +98,13 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
    {
       return new RESTEndpoint(createOrGetProvider(), mBeans);
    }
-   
-   void setManagementAddress(String managementAddress) 
+
+   void setManagementAddress(String managementAddress)
    {
       this.managementAddress = managementAddress;
    }
 
-   void setManagementPort(int managementPort) 
+   void setManagementPort(int managementPort)
    {
       this.managementPort = managementPort;
    }

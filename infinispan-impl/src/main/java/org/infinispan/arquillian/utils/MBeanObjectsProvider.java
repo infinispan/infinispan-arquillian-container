@@ -23,33 +23,39 @@ import java.util.List;
 /**
  * MBean objects for accessing cache, cache manager, cache statistics MBeans and
  * server module endpoints via JMX.
- * 
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * 
+ *
  */
 public class MBeanObjectsProvider
 {
+   private static final String DEFAULT_JMX_DOMAIN = "jboss.infinispan-core";
+
    /**
     * Holds domain name for JMX
     */
-   public static final String DOMAIN = "jboss.infinispan";
+   public final String domain;
 
    public String hotRodServerMBean;
 
    public String memCachedServerMBean;
 
+   public MBeanObjectsProvider(String jmxDomain) {
+      this.domain = jmxDomain != null ? jmxDomain : DEFAULT_JMX_DOMAIN;
+   }
+
    /**
-    * 
+    *
     * Returns an MBean for the cache manager.
-    * 
+    *
     * @param provider the MBean server connection provider
     * @param cacheManagerName the cache manager name
     * @return the cache manager MBean
     */
    public String getCacheManagerMBean(MBeanServerConnectionProvider provider, String cacheManagerName)
-   {  
+   {
       //e.g. org.infinispan:type=CacheManager,name="default",component=CacheManager
-      String pattern = DOMAIN + ":" + "type=CacheManager,name=\"" + cacheManagerName + "\",component=CacheManager";
+      String pattern = domain + ":" + "type=CacheManager,name=\"" + cacheManagerName + "\",component=CacheManager";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByPattern(provider, pattern);
       if (mBeanNames.size() != 1)
       {
@@ -62,9 +68,9 @@ public class MBeanObjectsProvider
    }
 
    /**
-    * 
+    *
     * Returns an MBean for the cache.
-    * 
+    *
     * @param provider the MBean server connection provider
     * @param cacheName the cache name
     * @param cacheManagerName the cache manager name
@@ -73,7 +79,7 @@ public class MBeanObjectsProvider
    public String getCacheMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache mbeans
-      String pattern = DOMAIN + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Cache";
+      String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Cache";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
       if (mBeanNames.size() != 1)
       {
@@ -86,9 +92,9 @@ public class MBeanObjectsProvider
    }
 
    /**
-    * 
+    *
     * Returns an MBean for the cache statistics.
-    * 
+    *
     * @param provider the MBean server connection provider
     * @param cacheName the cache name
     * @param cacheManagerName the cache manager name
@@ -97,7 +103,7 @@ public class MBeanObjectsProvider
    public String getCacheStatisticsMBean(MBeanServerConnectionProvider provider, String cacheName, String cacheManagerName)
    {
       // name of the cache is "*" here -> get all cache statistics mbeans
-      String pattern = DOMAIN + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Statistics";
+      String pattern = domain + ":" + "type=Cache,*,manager=\"" + cacheManagerName + "\",component=Statistics";
       List<String> mBeanNames = MBeanUtils.getMBeanNamesByKeyValuePattern(provider, pattern, "name", cacheName);
       if (mBeanNames.size() != 1)
       {
@@ -121,7 +127,7 @@ public class MBeanObjectsProvider
    }
 
    /**
-    * 
+    *
     * Returns a HotRod server MBean.
     *
     * @param endpointName the name of the endpoint as specified in the server's configuration file
@@ -129,11 +135,11 @@ public class MBeanObjectsProvider
     */
    public String getHorRodServerMBean(String endpointName)
    {
-      return DOMAIN + ":type=Server,name=HotRod" + getEndpointSuffix(endpointName) + ",component=Transport";
+      return domain + ":type=Server,name=HotRod" + getEndpointSuffix(endpointName) + ",component=Transport";
    }
 
    /**
-    * 
+    *
     * Returns a MemCached server MBean.
     *
     * @param endpointName name of the endpoint as specified in the server's configuration file
@@ -141,7 +147,7 @@ public class MBeanObjectsProvider
     */
    public String getMemcachedServerMBean(String endpointName)
    {
-      return DOMAIN + ":type=Server,name=Memcached" + getEndpointSuffix(endpointName) + ",component=Transport";
+      return domain + ":type=Server,name=Memcached" + getEndpointSuffix(endpointName) + ",component=Transport";
    }
 
    private String getEndpointSuffix(String endpointName)
@@ -150,13 +156,13 @@ public class MBeanObjectsProvider
    }
 
    /**
-    * 
+    *
     * Returns a domain name for JMX.
-    * 
+    *
     * @return the domain name for JMX
     */
    public String getDomain()
    {
-      return DOMAIN;
+      return domain;
    }
 }

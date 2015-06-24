@@ -30,46 +30,47 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.as.arquillian.container.CommonContainerConfiguration;
 
 /**
- * A creator of {@link RemoteInfinispanServer} objects. Creates a single instance of 
- * {@link InfinispanContext} and stores {@link RemoteInfinispanServer} objects 
+ * A creator of {@link RemoteInfinispanServer} objects. Creates a single instance of
+ * {@link InfinispanContext} and stores {@link RemoteInfinispanServer} objects
  * related to particular containers into the context.
- * 
+ *
  * {@link RemoteInfinispanServer} instances point to a standalone
  * Infinispan server.
- * 
+ *
  * Servers can be found in the context through container's name/identifier matching
  * an attribute called <strong>qualifier</strong> on a container tag in Arquillian
- * configuration file. 
- * 
+ * configuration file.
+ *
  * <p>
  * Observes:
  * </p>
  * <ul>
  * <li>{@link SetupContainer}</li>
  * </ul>
- * 
+ *
  * <p>
  * Produces:
  * </p>
  * <ul>
  * <li>{@link InfinispanContext}</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
- * 
+ *
  */
 public class InfinispanConfigurator
 {
    private final String STANDALONE_FLAG = "protocol";  //protocol=hotrod|memcached|websocket
    private final String SKIP_ISPN_CONTEXT_FLAG = "skipIspnContext";  //if the flag is present, container creation and in injection to context is skipped
+   private final String JMX_DOMAIN = "jmxDomain";
 
    @Inject
    @SuiteScoped
    private InstanceProducer<InfinispanContext> infinispanContext;
 
    /**
-    * Creates an {@link InfinispanContext} and stores a {@link RemoteInfinispanServer} in it. 
-    * 
+    * Creates an {@link InfinispanContext} and stores a {@link RemoteInfinispanServer} in it.
+    *
     * @param event an event being observed
     */
    public void configureInfinispan(@Observes SetupContainer event)
@@ -109,7 +110,8 @@ public class InfinispanConfigurator
          }
          else
          {
-            server = new InfinispanServer(conf.getManagementAddress(), conf.getManagementPort());
+            String jmxDomain = props.get(JMX_DOMAIN);
+            server = new InfinispanServer(conf.getManagementAddress(), conf.getManagementPort(), jmxDomain);
          }
       }
       catch (Exception e)
@@ -119,10 +121,10 @@ public class InfinispanConfigurator
 
       infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
    }
-   
+
    /**
-    * Reconfigures server instances when needed. 
-    * 
+    * Reconfigures server instances when needed.
+    *
     * @param event an event being observed
     */
    public void reconfigureInfinispan(@Observes StartContainer event)
