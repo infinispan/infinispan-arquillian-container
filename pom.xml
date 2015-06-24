@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.infinispan.arquillian.container</groupId>
     <artifactId>infinispan-parent-arquillian</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Infinispan Arquillian Container Parent</name>
     <description>Infinispan Container integrations for the Arquillian project</description>
@@ -96,6 +96,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
     <!-- Properties -->
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
         <version.wildfly>8.1.0.CR2</version.wildfly>
         <version.arquillian_core>1.0.3.Final</version.arquillian_core>
         <version.infinispan_core>7.0.0.Alpha4</version.infinispan_core>
@@ -107,6 +109,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
         <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
+        <version.maven.source.plugin>2.4</version.maven.source.plugin>
         <version.jbossjta>4.16.4.Final</version.jbossjta>
         <version.jboss-logging>3.1.1.GA</version.jboss-logging>
         <version.remoting-jmx>1.0.0.Final</version.remoting-jmx>
