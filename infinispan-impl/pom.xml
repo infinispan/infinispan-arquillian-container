@@ -85,10 +85,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.arquillian</groupId>
             <artifactId>wildfly-arquillian-common</artifactId>
-            <version>${version.wildfly}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -108,12 +106,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <groupId>org.jboss.jbossts</groupId>
             <artifactId>jbossjta</artifactId>
             <version>${version.jbossjta}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-controller-client</artifactId>
-            <version>${version.wildfly}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.remoting3</groupId>

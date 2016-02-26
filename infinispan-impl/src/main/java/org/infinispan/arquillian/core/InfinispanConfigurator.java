@@ -21,6 +21,7 @@ package org.infinispan.arquillian.core;
 import java.util.Map;
 
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
+import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
 import org.jboss.arquillian.container.spi.event.SetupContainer;
 import org.jboss.arquillian.container.spi.event.StartContainer;
 import org.jboss.arquillian.core.api.InstanceProducer;
@@ -60,9 +61,7 @@ import org.jboss.as.arquillian.container.CommonContainerConfiguration;
  */
 public class InfinispanConfigurator
 {
-   private final String STANDALONE_FLAG = "protocol";  //protocol=hotrod|memcached|websocket
-   private final String SKIP_ISPN_CONTEXT_FLAG = "skipIspnContext";  //if the flag is present, container creation and in injection to context is skipped
-   private final String JMX_DOMAIN = "jmxDomain";
+   private final String JMX_DOMAIN_PROPERTY = "jmxDomain";
 
    @Inject
    @SuiteScoped
@@ -77,49 +76,35 @@ public class InfinispanConfigurator
    {
       ContainerDef def = event.getContainer().getContainerConfiguration();
       Map<String, String> props = def.getContainerProperties();
-      if (props != null && props.containsKey(SKIP_ISPN_CONTEXT_FLAG)) {
-         return;
-      }
 
       if (infinispanContext.get() == null)
       {
          infinispanContext.set(new InfinispanContext());
       }
 
-      RemoteInfinispanServer server = null;
-
-
-      CommonContainerConfiguration conf;
+      final String jmxDomain = props.getOrDefault(JMX_DOMAIN_PROPERTY, "jboss.datagrid-infinispan");
       try
       {
-         conf = (CommonContainerConfiguration) event.getContainer().createDeployableConfiguration();
-         server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-         if (server != null)
+         ContainerConfiguration conf = event.getContainer().createDeployableConfiguration();
+         if (conf instanceof CommonContainerConfiguration) //standalone mode
          {
-            if (server instanceof InfinispanServer)
-            {
-               InfinispanServer orig = (InfinispanServer) server;
-               orig.setManagementAddress(conf.getManagementAddress());
-               orig.setManagementPort(conf.getManagementPort());
-               return;
-            }
-            else
-            {
-               throw new RuntimeException("Cannot override properties of a server of different type");
-            }
-         }
-         else
-         {
-            String jmxDomain = props.get(JMX_DOMAIN);
-            server = new InfinispanServer(conf.getManagementAddress(), conf.getManagementPort(), jmxDomain);
+            final String containerName = event.getContainer().getContainerConfiguration().getContainerName();
+            CommonContainerConfiguration commonConfig = (CommonContainerConfiguration) conf;
+            registerInfinispanServer(containerName, commonConfig.getManagementAddress(), commonConfig.getManagementPort(), false, jmxDomain);
          }
       }
       catch (Exception e)
       {
          throw new RuntimeException("Could not create deployable configuration", e);
       }
+   }
 
-      infinispanContext.get().add(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName(), server);
+   private void registerInfinispanServer(String containerName, String managementAddress, int managementPort, boolean isDomainMode, String targetJmxDomain) {
+      RemoteInfinispanServer server = (RemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, containerName);
+      if (server == null) {
+         server = new RemoteInfinispanServerImpl(managementAddress, managementPort, isDomainMode, targetJmxDomain);
+         infinispanContext.get().add(RemoteInfinispanServer.class, containerName, server);
+      }
    }
 
    /**
@@ -131,7 +116,8 @@ public class InfinispanConfigurator
    {
       if (infinispanContext.get() != null) {
          AbstractRemoteInfinispanServer server = (AbstractRemoteInfinispanServer) infinispanContext.get().get(RemoteInfinispanServer.class, event.getContainer().getContainerConfiguration().getContainerName());
-         server.invalidateMBeanProvider();
+         if (server != null)
+            server.invalidateMBeanProvider();
       }
    }
 }
