@@ -27,7 +27,6 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.Validate;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
-import org.infinispan.arquillian.core.SecurityActions;
 
 /**
  * InfinispanTestEnricher enriches tests with {@link RemoteInfinispanServer} or
@@ -106,9 +105,13 @@ public class InfinispanTestEnricher implements TestEnricher
       }
       else
       {
-         //infinispan context should be created and populated with data from arquillian.xml by now
          Validate.notNull(infinispanContext.get(), "Infinispan context should not be null");
          value = infinispanContext.get().get(type, resource.value());
+         if (value == null) {
+            //this is domain mode, the container is created on demand
+            value = new RemoteInfinispanServerImpl(resource.host(), resource.jmxPort(), true, resource.jmxDomain());
+            infinispanContext.get().add(type, value);
+         }
       }
       return value;
    }

@@ -97,9 +97,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <!-- Properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <version.wildfly>8.1.0.CR2</version.wildfly>
-        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
+
+        <version.org.wildfly.core>2.0.0.Beta1</version.org.wildfly.core>
+        <version.org.wildfly.arquillian>1.0.2.Final</version.org.wildfly.arquillian>
+        <version.arquillian_core>1.1.10.Final</version.arquillian_core>
         <version.infinispan_core>7.0.0.Alpha4</version.infinispan_core>
         <version.infinispan_core_tests>${version.infinispan_core}</version.infinispan_core_tests>
         <version.hotrod.client>${version.infinispan_core}</version.hotrod.client>
@@ -137,6 +138,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
                 <artifactId>infinispan-core</artifactId>
                 <version>${version.infinispan_core}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.arquillian</groupId>
+                <artifactId>wildfly-arquillian-common</artifactId>
+                <version>${version.org.wildfly.arquillian}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.arquillian</groupId>
+                <artifactId>wildfly-arquillian-container-managed</artifactId>
+                <version>${version.org.wildfly.arquillian}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.infinispan</groupId>

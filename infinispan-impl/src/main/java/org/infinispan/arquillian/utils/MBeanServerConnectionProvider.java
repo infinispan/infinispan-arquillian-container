@@ -48,14 +48,19 @@ public final class MBeanServerConnectionProvider
 
    public MBeanServerConnectionProvider(String hostAddr, int port)
    {
-      setUpJmxServiceUrl(hostAddr, port);
+      setUpJmxServiceUrl(hostAddr, port, "http-remoting-jmx");
    }
 
-   private void setUpJmxServiceUrl(String hostAddr, int port)
+   public MBeanServerConnectionProvider(String hostAddr, int port, String remotingProtocol)
+   {
+      setUpJmxServiceUrl(hostAddr, port, remotingProtocol);
+   }
+
+   private void setUpJmxServiceUrl(String hostAddr, int port, String remotingProtocol)
    {
       this.hostAddr = hostAddr;
       this.port = port;
-      this.jmxServiceUrl = getRemotingJmxUrl();
+      this.jmxServiceUrl = getRemotingJmxUrl(remotingProtocol);
    }
 
    public MBeanServerConnection getConnection()
@@ -77,7 +82,7 @@ public final class MBeanServerConnectionProvider
       }
    }
 
-   private String getRemotingJmxUrl()
+   private String getRemotingJmxUrl(String jmxProtocol)
    {
       String useHostAddr = hostAddr;
       if (isValidInet6Address(hostAddr) && !hostAddr.matches(IPV6_BRACKETS_REGEX))
@@ -85,18 +90,6 @@ public final class MBeanServerConnectionProvider
          // add brackets if NO brackets specified
          useHostAddr = "[" + hostAddr + "]";
       }
-
-      if (String.valueOf(port).endsWith("9"))
-      {
-         // old jboss-as management port: remoting-jmx
-         log.info("Management port " + port + " ends with \"9\" -- " +
-                 "remoting-jmx protocol for JBoss AS is used instead of http-remoting-jmx for Wildfly.");
-         return "service:jmx:remoting-jmx://" + useHostAddr + ":" + port;
-      }
-      else
-      {
-         // wildfly: http-remoting-jmx
-         return "service:jmx:http-remoting-jmx://" + useHostAddr + ":" + port;
-      }
+      return "service:jmx:" + jmxProtocol + "://" + useHostAddr + ":" + port;
    }
 }

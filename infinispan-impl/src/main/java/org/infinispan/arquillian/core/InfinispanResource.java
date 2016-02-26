@@ -83,9 +83,36 @@ import java.lang.annotation.Target;
 public @interface InfinispanResource
 {
    /**
-    * Defines container information about which should be injected.
+    * The name of the container.
+    *
+    * For standalone mode, this is the value of the qualifier attribute on container element in arquillian.xml:
+    *
+    *    <container qualifier="value" ... />
+    *
+    * For domain mode, the format should be host:server (e.g. master:server-one)
     * 
     * @return the name of the container
     */
    String value() default "default";
+
+   /**
+    * The host address.
+    *
+    * @return the host address
+    */
+   String host() default "127.0.0.1";
+
+   /**
+    * The jmx port of the server.
+    *
+    * @return jmx port of the server
+    */
+   int jmxPort() default 9990;
+
+   /**
+    * Infinispan JMX domain.
+    *
+    * @return Infinispan JMX domain.
+    */
+   String jmxDomain() default "jboss.datagrid-infinispan";
 }

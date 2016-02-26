@@ -33,18 +33,18 @@ import org.infinispan.arquillian.utils.MBeanServerConnectionProvider;
  * @author <a href="mailto:mgencur@redhat.com">Martin Gencur</a>
  *
  */
-public class InfinispanServer extends AbstractRemoteInfinispanServer
+public class RemoteInfinispanServerImpl extends AbstractRemoteInfinispanServer
 {
    private MBeanObjectsProvider mBeans;
-
    private String managementAddress;
-
    private int managementPort;
+   private boolean isDomainMode;
 
-   public InfinispanServer(String managementAddress, int managementPort, String jmxDomain)
+   public RemoteInfinispanServerImpl(String managementAddress, int managementPort, boolean isDomainMode, String jmxDomain)
    {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
+      this.isDomainMode = isDomainMode;
       this.provider = createOrGetProvider();
       this.mBeans = new MBeanObjectsProvider(jmxDomain);
    }
@@ -54,7 +54,7 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
    {
       if (provider == null)
       {
-         provider = new MBeanServerConnectionProvider(managementAddress, managementPort);
+         provider = new MBeanServerConnectionProvider(managementAddress, managementPort, isDomainMode == true ? "remote" : "http-remoting-jmx");
       }
       return provider;
    }
@@ -78,7 +78,8 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
    }
 
    @Override
-   public HotRodEndpoint getHotrodEndpoint(String name) {
+   public HotRodEndpoint getHotrodEndpoint(String name)
+   {
       return new HotRodEndpoint(name, createOrGetProvider(), mBeans);
    }
 
@@ -89,7 +90,8 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
    }
 
    @Override
-   public MemCachedEndpoint getMemcachedEndpoint(String name) {
+   public MemCachedEndpoint getMemcachedEndpoint(String name)
+   {
       return new MemCachedEndpoint(name, createOrGetProvider(), mBeans);
    }
 
@@ -97,15 +99,5 @@ public class InfinispanServer extends AbstractRemoteInfinispanServer
    public RESTEndpoint getRESTEndpoint()
    {
       return new RESTEndpoint(createOrGetProvider(), mBeans);
-   }
-
-   void setManagementAddress(String managementAddress)
-   {
-      this.managementAddress = managementAddress;
-   }
-
-   void setManagementPort(int managementPort)
-   {
-      this.managementPort = managementPort;
    }
 }
