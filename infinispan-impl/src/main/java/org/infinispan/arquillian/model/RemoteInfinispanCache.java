@@ -203,6 +203,17 @@ public class RemoteInfinispanCache
    {
       return Long.parseLong(getStatistics(CacheStatistics.NUMBER_OF_ENTRIES));
    }
+
+   /**
+    *
+    * Returns a number of entries currently stored in-memory in the cache.
+    *
+    * @return the number of entries currently in-memory  the cache
+    */
+   public long getNumberOfEntriesInMemory()
+   {
+      return Long.parseLong(getStatistics(CacheStatistics.NUMBER_OF_ENTRIES_IN_MEMORY));
+   }
    
    /**
     * 
