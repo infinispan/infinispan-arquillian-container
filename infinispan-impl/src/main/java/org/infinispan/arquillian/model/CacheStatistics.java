@@ -30,6 +30,7 @@ public enum CacheStatistics
    EVICTIONS("Evictions"), REMOVE_MISSES("RemoveMisses"),
    READ_WRITE_RATIO("ReadWriteRatio"), HITS("Hits"),
    NUMBER_OF_ENTRIES("NumberOfEntries"),
+   NUMBER_OF_ENTRIES_IN_MEMORY("NumberOfEntriesInMemory"),
    TIME_SINCE_RESET("TimeSinceReset"),
    ELAPSED_TIME("ElapsedTime"),
    MISSES("Misses"),
@@ -41,7 +42,7 @@ public enum CacheStatistics
 
    private String statsValue;
 
-   private CacheStatistics(String locStatsValue)
+   CacheStatistics(String locStatsValue)
    {
       this.statsValue = locStatsValue;
    }
