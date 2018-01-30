@@ -57,12 +57,12 @@ public class RESTEndpoint
       String hostname;
       try
       {
-         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getHorRodServerMBean(), ServerModuleAttributes.HOST_NAME);
+         hostname = MBeanUtils.getMBeanAttribute(provider, mBeans.getRestServerMBean(), ServerModuleAttributes.HOST_NAME);
          return InetAddress.getByName(hostname);
       }
       catch (Exception e)
       {
-         throw new RuntimeException("Could not retrieve HotRod host", e);
+         throw new RuntimeException("Could not retrieve REST host", e);
       }
    }
 
