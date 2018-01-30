@@ -128,6 +128,29 @@ public class MBeanObjectsProvider
 
    /**
     *
+    * Returns a REST server MBean.
+    *
+    * @param endpointName the name of the endpoint as specified in the server's configuration file
+    * @return the REST server MBean
+    */
+   public String getRestServerMBean(String endpointName)
+   {
+      return domain + ":type=Server,name=REST" + getEndpointSuffix(endpointName) + ",component=Transport";
+   }
+
+   /**
+    *
+    * Returns a REST server MBean with a default name.
+    *
+    * @return the REST server MBean
+    */
+   public String getRestServerMBean()
+   {
+      return getRestServerMBean("");
+   }
+
+   /**
+    *
     * Returns a HotRod server MBean.
     *
     * @param endpointName the name of the endpoint as specified in the server's configuration file
