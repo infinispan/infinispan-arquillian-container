@@ -1,4 +1,4 @@
-#Infinispan Arquillian Container
+# Infinispan Arquillian Container
 
 Infinispan itself supports two modes of access – ‘Embedded’ and ‘Remote’. Embedded 
 allows direct programmatic access within the same JVM and remote allows user 
@@ -51,6 +51,7 @@ yourselves in the code. If the used Arquillian container is not compatible with 
 configure the container to skip adding it to  Infinispan-Arquillian context by setting `<property name="skipIspnContext"/>`
 in Arquillian configuration file.
 
-##Building
-
-   mvn clean install
+## Building
+~~~
+mvn clean install
+~~~
