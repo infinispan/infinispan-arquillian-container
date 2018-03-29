@@ -115,7 +115,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <version.jboss-logging>3.1.1.GA</version.jboss-logging>
         <version.remoting-jmx>1.0.0.Final</version.remoting-jmx>
         <version.xnio-nio>3.2.2.Final</version.xnio-nio>
-        <version.jboss-sasl>1.0.0.Beta9</version.jboss-sasl>
     </properties>
 
     <dependencyManagement>
@@ -172,11 +171,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-nio</artifactId>
                 <version>${version.xnio-nio}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.sasl</groupId>
-                <artifactId>jboss-sasl</artifactId>
-                <version>${version.jboss-sasl}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

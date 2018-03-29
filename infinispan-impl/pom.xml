@@ -115,10 +115,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-nio</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.sasl</groupId>
-            <artifactId>jboss-sasl</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
