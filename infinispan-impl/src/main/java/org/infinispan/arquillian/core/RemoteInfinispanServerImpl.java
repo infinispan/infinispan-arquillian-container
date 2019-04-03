@@ -38,13 +38,18 @@ public class RemoteInfinispanServerImpl extends AbstractRemoteInfinispanServer
    private MBeanObjectsProvider mBeans;
    private String managementAddress;
    private int managementPort;
-   private boolean isDomainMode;
+   private String jmxProtocol;
 
    public RemoteInfinispanServerImpl(String managementAddress, int managementPort, boolean isDomainMode, String jmxDomain)
    {
+      this(managementAddress, managementPort, isDomainMode == true ? "remote" : "http-remoting-jmx", jmxDomain);
+   }
+
+   public RemoteInfinispanServerImpl(String managementAddress, int managementPort, String jmxProtocol, String jmxDomain)
+   {
       this.managementAddress = managementAddress;
       this.managementPort = managementPort;
-      this.isDomainMode = isDomainMode;
+      this.jmxProtocol = jmxProtocol;
       this.provider = createOrGetProvider();
       this.mBeans = new MBeanObjectsProvider(jmxDomain);
    }
@@ -54,7 +59,7 @@ public class RemoteInfinispanServerImpl extends AbstractRemoteInfinispanServer
    {
       if (provider == null)
       {
-         provider = new MBeanServerConnectionProvider(managementAddress, managementPort, isDomainMode == true ? "remote" : "http-remoting-jmx");
+         provider = new MBeanServerConnectionProvider(managementAddress, managementPort, jmxProtocol);
       }
       return provider;
    }
