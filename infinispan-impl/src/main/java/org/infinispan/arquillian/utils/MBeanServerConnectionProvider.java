@@ -36,7 +36,7 @@ import static org.infinispan.arquillian.utils.InetAddressValidator.isValidInet6A
  *
  * (imported from JBoss AS 7 and modified)
  */
-public final class MBeanServerConnectionProvider
+public final class MBeanServerConnectionProvider implements AutoCloseable
 {
 
    private static final Logger log = Logger.getLogger(MBeanServerConnectionProvider.class.getName());
@@ -91,5 +91,12 @@ public final class MBeanServerConnectionProvider
          useHostAddr = "[" + hostAddr + "]";
       }
       return "service:jmx:" + jmxProtocol + "://" + useHostAddr + ":" + port;
+   }
+
+   @Override
+   public void close() throws Exception {
+      if (jmxConnector != null) {
+         jmxConnector.close();
+      }
    }
 }
