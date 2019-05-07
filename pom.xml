@@ -98,24 +98,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.org.wildfly.core>2.0.0.Beta1</version.org.wildfly.core>
-        <version.org.wildfly.arquillian>1.0.2.Final</version.org.wildfly.arquillian>
-        <version.arquillian_core>1.1.10.Final</version.arquillian_core>
-        <version.infinispan_core>7.0.0.Alpha4</version.infinispan_core>
+        <version.org.wildfly.core>8.0.0.Final</version.org.wildfly.core>
+        <version.org.wildfly.arquillian>2.2.0.Final</version.org.wildfly.arquillian>
+        <version.arquillian_core>1.4.0.Final</version.arquillian_core>
+        <version.infinispan_core>9.4.12.Final</version.infinispan_core>
         <version.infinispan_core_tests>${version.infinispan_core}</version.infinispan_core_tests>
         <version.hotrod.client>${version.infinispan_core}</version.hotrod.client>
-        <version.junit>4.8.1</version.junit>
-        <version.testng>5.14.6</version.testng>
-        <version.mockito>1.8.3</version.mockito>
-        <version.maven.compiler.plugin>2.3.2</version.maven.compiler.plugin>
-        <version.maven.surefire.plugin>2.9</version.maven.surefire.plugin>
-        <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
-        <version.maven.source.plugin>2.4</version.maven.source.plugin>
-        <version.jbossjta>4.16.4.Final</version.jbossjta>
-        <version.jboss-logging>3.1.1.GA</version.jboss-logging>
-        <version.remoting-jmx>1.0.0.Final</version.remoting-jmx>
-        <version.xnio-nio>3.2.2.Final</version.xnio-nio>
-        <version.jboss-sasl>1.0.0.Beta9</version.jboss-sasl>
+        <version.junit>4.12</version.junit>
+        <version.testng>6.14.3</version.testng>
+        <version.mockito>2.27.0</version.mockito>
+        <version.maven.compiler.plugin>3.8.1</version.maven.compiler.plugin>
+        <version.maven.surefire.plugin>3.0.0-M3</version.maven.surefire.plugin>
+        <version.maven.clean.plugin>3.1.0</version.maven.clean.plugin>
+        <version.maven.source.plugin>3.0.1</version.maven.source.plugin>
+        <version.narayana>5.9.5.Final</version.narayana>
+        <version.jboss-logging>3.4.0.GA</version.jboss-logging>
+        <version.remoting>3.3.9.Final</version.remoting>
+        <version.xnio-nio>3.6.5.Final</version.xnio-nio>
+        <version.jboss-sasl>1.0.5.Final</version.jboss-sasl>
     </properties>
 
     <dependencyManagement>
@@ -129,7 +129,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${version.mockito}</version>
                 <scope>test</scope>
             </dependency>
@@ -165,8 +165,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
             </dependency>
             <dependency>
                 <groupId>org.jboss.remoting3</groupId>
-                <artifactId>remoting-jmx</artifactId>
-                <version>${version.remoting-jmx}</version>
+                <artifactId>jboss-remoting</artifactId>
+                <version>${version.remoting}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.xnio</groupId>

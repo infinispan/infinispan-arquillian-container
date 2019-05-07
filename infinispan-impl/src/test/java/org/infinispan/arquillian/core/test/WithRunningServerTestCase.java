@@ -151,7 +151,7 @@ public class WithRunningServerTestCase extends AbstractTestTestBase {
         }
     }
 
-    private class ConfigArgumentMatcher extends ArgumentMatcher<Map<String, String>> {
+    private class ConfigArgumentMatcher implements ArgumentMatcher<Map<String, String>> {
 
         String expected;
 
@@ -160,9 +160,8 @@ public class WithRunningServerTestCase extends AbstractTestTestBase {
         }
 
         @Override
-        public boolean matches(Object argument) {
-            Map<String, String> result = (Map<String, String>) argument;
-            return result.get(WithRunningServerObserver.SERVER_CONFIG_PROPERTY).equals(expected);
+        public boolean matches(Map<String, String> argument) {
+            return argument.get(WithRunningServerObserver.SERVER_CONFIG_PROPERTY).equals(expected);
         }
     }
 }
