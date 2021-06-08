@@ -114,7 +114,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <version.narayana>5.9.5.Final</version.narayana>
         <version.jboss-logging>3.4.0.GA</version.jboss-logging>
         <version.remoting>3.3.9.Final</version.remoting>
-        <version.xnio-nio>3.6.5.Final</version.xnio-nio>
+        <version.xnio-nio>3.7.9.Final</version.xnio-nio>
         <version.jboss-sasl>1.0.5.Final</version.jboss-sasl>
     </properties>
 
